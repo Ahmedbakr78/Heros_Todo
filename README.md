@@ -79,6 +79,7 @@
 - [Changelog and Releases](#changelog-and-releases)
 - [GitHub Topics, About and Website Setup](#github-topics-about-and-website-setup)
 - [License and Credits](#license-and-credits)
+- [Author](#author)
 
 ---
 
@@ -1158,7 +1159,16 @@ Website source: [`docs/index.html`](./docs/index.html) — zero dependencies, sa
 
 MIT — see [LICENSE](./LICENSE). Free and unlimited forever.
 
-Built by **Ahmed ABOBAKR** — [github.com/Ahmedbakr78](https://github.com/Ahmedbakr78).
+## Author
+
+**Ahmed ABOBAKR**
+
+| | |
+|---|---|
+| GitHub | [github.com/Ahmedbakr78](https://github.com/Ahmedbakr78) |
+| LinkedIn | [Ahmed Abo Bakr](https://www.linkedin.com/in/ahmed-abo-bakr-1b2466288/?isSelfProfile=true) |
+
+Built and maintained as a free tool for students, developers and researchers who want a private, offline notes studio in the browser side panel. Feedback, issues and pull requests are welcome on the repository.
 
 Engines that make it possible (all vendored, all offline): [marked](https://github.com/markedjs/marked) (GFM), [KaTeX](https://katex.org/) (math), [Mermaid](https://mermaid.js.org/) (diagrams), [PDF.js](https://mozilla.github.io/pdf.js/) (viewing), [pdf-lib](https://pdf-lib.js.org/) (merging). Design system-forged alongside Heros PDF and Heros Markdown — as read-only references, never modified.
 
