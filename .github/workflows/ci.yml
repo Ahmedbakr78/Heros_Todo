@@ -14,16 +14,9 @@ jobs:
 
       - name: Required files exist
         run: |
-          test -f todo-panel-extension/manifest.json
-          test -f todo-panel-extension/sidepanel.html
-          test -f todo-panel-extension/app.js
-          test -f todo-panel-extension/background.js
-          test -f todo-panel-extension/vendor/marked.min.js
-          test -f todo-panel-extension/vendor/katex.min.js
-          test -f todo-panel-extension/vendor/mermaid.min.js
-          test -f todo-panel-extension/vendor/pdf.min.js
-          test -f todo-panel-extension/vendor/pdf-lib.min.js
-          test -f README.md FEATURES.md LICENSE CHANGELOG.md
+          for f in todo-panel-extension/manifest.json todo-panel-extension/sidepanel.html todo-panel-extension/app.js todo-panel-extension/background.js todo-panel-extension/vendor/marked.min.js todo-panel-extension/vendor/katex.min.js todo-panel-extension/vendor/mermaid.min.js todo-panel-extension/vendor/pdf.min.js todo-panel-extension/vendor/pdf-lib.min.js README.md FEATURES.md LICENSE CHANGELOG.md; do
+            test -f "$f" || (echo "missing: $f" && exit 1)
+          done
           echo "files OK"
 
       - name: Manifest valid + panel-only
