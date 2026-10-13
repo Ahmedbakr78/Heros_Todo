@@ -3542,12 +3542,13 @@ function ttsSpeak(text) {
     const shown = els.mdBody && !els.mdBody.hidden ? (els.mdBody.innerText || '') : '';
     src = shown.trim() || ((S.activePath && (S.pdfText || {})[S.activePath]) || '') || activeText() || '';
   }
-  src = String(src).replace(/\s+/g, ' ').trim().slice(0, 30000);
+  src = sanitizeTts(src).replace(/\s+/g, ' ').trim().slice(0, 30000);
   if (!src) { toast('Nothing to read', 'err'); return; }
   try { speechSynthesis.resume(); } catch (e) {}
   TTS.queue = chunkText(src);
   if (!TTS.queue.length) { toast('Nothing to read', 'err'); return; }
   TTS.idx = 0; TTS.active = true; TTS.started = false;
+  TTS.retry = false; TTS.voiceIdx = -1; TTS.forceVoiceURI = null;
   if (els.readBar) els.readBar.hidden = false;
   paintTtsProg();
   setStatus('Reading…');
@@ -3560,6 +3561,34 @@ function ttsSpeak(text) {
     }
   }, 3000);
 }
+function sanitizeTts(t) {
+  // some engines fail the whole utterance on control / zero-width / object-replacement chars
+  return String(t || '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B-\u200D\uFEFF\uFFFC]/g, '');
+}
+function ttsFixHint() {
+  const n = ttsVoices().length;
+  if (!n) return ' — no system voices (Linux: install speech-dispatcher + espeak-ng, then reload the panel)';
+  return ' — all ' + n + ' voice(s) failed; check audio output, or pick another voice in the read bar';
+}
+function ttsTryNextVoice() {
+  // a listed voice is often the broken part — cycle to the next one automatically
+  const vs = ttsVoices();
+  if (!vs.length) return false;
+  const ordered = vs.slice();
+  const curURI = TTS.forceVoiceURI || S.ttsVoice || ((ttsPickVoice() || {}).voiceURI) || null;
+  const i = ordered.findIndex(v => v.voiceURI === curURI);
+  TTS.voiceIdx = i < 0 ? 0 : i + 1;
+  if (TTS.voiceIdx >= ordered.length) return false;
+  const v = ordered[TTS.voiceIdx];
+  TTS.retry = false;
+  TTS.forceVoiceURI = v.voiceURI;
+  S.ttsVoice = v.voiceURI;
+  if (els.ttsVoice) els.ttsVoice.value = v.voiceURI;
+  try { persist(); } catch (e) {}
+  toast('Voice failed — trying ' + v.name + '…');
+  setTimeout(() => { if (TTS.active) speakChunk(); }, 200);
+  return true;
+}
 function speakChunk() {
   if (!TTS.active || TTS.idx >= TTS.queue.length) { ttsDone(); return; }
   let u = null;
@@ -3570,10 +3599,11 @@ function speakChunk() {
     toast('Read failed: ' + errName(e), 'err');
     return;
   }
-  const v = ttsPickVoice();
+  const vs = ttsVoices();
+  const v = (TTS.forceVoiceURI && vs.find(x => x.voiceURI === TTS.forceVoiceURI)) || ttsPickVoice();
   if (v) { try { u.voice = v; u.lang = v.lang; } catch (e) {} }
   try { u.rate = Math.min(2, Math.max(0.5, (+els.ttsRate.value || 10) / 10)); } catch (e) {}
-  u.onstart = () => { TTS.started = true; };
+  u.onstart = () => { TTS.started = true; TTS.retry = false; };
   u.onend = () => {
     if (!TTS.active) return;
     TTS.idx++;
@@ -3584,8 +3614,17 @@ function speakChunk() {
     if (!TTS.active) return;
     const err = ev && ev.error;
     if (err === 'interrupted' || err === 'canceled') return; // our own stop()
+    if (err === 'synthesis-failed' || err === 'synthesis-unavailable' || err === 'audio-busy' || err === 'audio-hardware' || err === 'network') {
+      if (!TTS.retry) {
+        // known Chrome flake: first utterance after load often fails — one same-voice retry
+        TTS.retry = true;
+        setTimeout(() => { if (TTS.active) speakChunk(); }, 250);
+        return;
+      }
+      if (ttsTryNextVoice()) return;
+    }
     ttsStop();
-    toast('Read stopped (' + (err || 'speech error') + ')', 'err');
+    toast('Read stopped (' + (err || 'speech error') + ')' + ttsFixHint(), 'err');
   };
   try {
     speechSynthesis.speak(u);

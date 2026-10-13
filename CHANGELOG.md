@@ -6,6 +6,11 @@ All notable changes, newest first. Format follows Keep a Changelog. Versions are
 
 ### Fixed
 
+- **Read aloud `synthesis-failed`:** the engine now sanitizes control/zero-width chars, retries once (first-utterance flake), then **auto-cycles to the next system voice** until one speaks — persisting the working voice. Only when every voice fails does it stop, naming the cause and the fix.
+- **Read aloud silence (previous):** voice picker, delayed chunked start, sentence chunks with progress, no-voice watchdog.
+
+### Fixed
+
 - **Read aloud actually works now.** The old one-shot `speak()` went silent on systems without voices (common on Linux), on Chrome's cancel-then-speak drop, and on long text. The new engine: explicit voice picker (persisted), `resume()` + delayed start, ~320-char sentence chunks with x/y progress, watchdog that names the real problem (no OS voices → install speech-dispatcher + espeak-ng), PDF text and selections as sources.
 - Rendered `- [ ]` wiring hardened further (both renderers, fence-safe mapping — shipped in 2.1.0 follow-up).
 
