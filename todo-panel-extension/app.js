@@ -3565,11 +3565,6 @@ function sanitizeTts(t) {
   // some engines fail the whole utterance on control / zero-width / object-replacement chars
   return String(t || '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B-\u200D\uFEFF\uFFFC]/g, '');
 }
-function ttsFixHint() {
-  const n = ttsVoices().length;
-  if (!n) return ' — no system voices (Linux: install speech-dispatcher + espeak-ng, then reload the panel)';
-  return ' — all ' + n + ' voice(s) failed; check audio output, or pick another voice in the read bar';
-}
 function ttsTryNextVoice() {
   // a listed voice is often the broken part — cycle to the next one automatically
   const vs = ttsVoices();
@@ -3624,7 +3619,7 @@ function speakChunk() {
       if (ttsTryNextVoice()) return;
     }
     ttsStop();
-    toast('Read stopped (' + (err || 'speech error') + ')' + ttsFixHint(), 'err');
+    console.warn('[HerosTodo] read stopped:', err || 'speech error');
   };
   try {
     speechSynthesis.speak(u);

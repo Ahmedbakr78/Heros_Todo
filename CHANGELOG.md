@@ -6,7 +6,7 @@ All notable changes, newest first. Format follows Keep a Changelog. Versions are
 
 ### Fixed
 
-- **Read aloud `synthesis-failed`:** the engine now sanitizes control/zero-width chars, retries once (first-utterance flake), then **auto-cycles to the next system voice** until one speaks — persisting the working voice. Only when every voice fails does it stop, naming the cause and the fix.
+- **Read aloud `synthesis-failed`:** the engine now sanitizes control/zero-width chars, retries once (first-utterance flake), then **auto-cycles to the next system voice** until one speaks — persisting the working voice. Exhausted voices end silently (console only, no error toast).
 - **Read aloud silence (previous):** voice picker, delayed chunked start, sentence chunks with progress, no-voice watchdog.
 
 ### Fixed
