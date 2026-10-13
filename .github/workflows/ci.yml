@@ -1,0 +1,63 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Required files exist
+        run: |
+          test -f todo-panel-extension/manifest.json
+          test -f todo-panel-extension/sidepanel.html
+          test -f todo-panel-extension/app.js
+          test -f todo-panel-extension/background.js
+          test -f todo-panel-extension/vendor/marked.min.js
+          test -f todo-panel-extension/vendor/katex.min.js
+          test -f todo-panel-extension/vendor/mermaid.min.js
+          test -f todo-panel-extension/vendor/pdf.min.js
+          test -f todo-panel-extension/vendor/pdf-lib.min.js
+          test -f README.md FEATURES.md LICENSE CHANGELOG.md
+          echo "files OK"
+
+      - name: Manifest valid + panel-only
+        run: |
+          python3 -c "
+          import json
+          m = json.load(open('todo-panel-extension/manifest.json'))
+          assert m['manifest_version'] == 3, 'must be MV3'
+          assert 'side_panel' in m, 'panel-only: side_panel required'
+          assert set(m.get('permissions', [])) <= {'sidePanel', 'storage'}, 'only sidePanel+storage allowed'
+          assert 'browser_action' not in m and 'page_action' not in m, 'no popups-as-tabs'
+          print('manifest OK', m['version'])
+          "
+
+      - name: Version trio agrees
+        run: |
+          MV=$(python3 -c "import json; print(json.load(open('todo-panel-extension/manifest.json'))['version'])")
+          grep -q "## \[$MV\]" CHANGELOG.md || (echo "CHANGELOG top must be [$MV]" && exit 1)
+          test -f "RELEASE_v$MV.md" || (echo "RELEASE_v$MV.md missing" && exit 1)
+          echo "versions OK ($MV)"
+
+      - name: JS syntax
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: |
+          node --check todo-panel-extension/app.js
+          node --check todo-panel-extension/background.js
+          echo "syntax OK"
+
+      - name: Docs hygiene (no emojis in md)
+        run: |
+          # badges (shields) and text arrows are fine; raw emoji ranges are not
+          if grep -rP '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}\x{2B00}-\x{2BFF}]' --include='*.md' . ; then
+            echo "emojis found in docs" && exit 1
+          fi
+          echo "docs clean"

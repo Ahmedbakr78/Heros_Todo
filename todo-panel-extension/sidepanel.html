@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<meta name="theme-color" content="#0f1115">
+<link rel="icon" type="image/png" href="icons/icon32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Heros Todo — Markdown · PDF · LaTeX Panel</title>
+<link rel="stylesheet" href="vendor/katex.min.css">
+<style>
+/* Reading width + font prefs (Heros Markdown comfort) */
+:root{ --read-w:680px; --lh:1.7; --rfont:var(--font); }
+body[data-width="narrow"]{ --read-w:560px; }
+body[data-width="comfort"]{ --read-w:680px; }
+body[data-width="wide"]{ --read-w:860px; }
+body[data-width="full"]{ --read-w:100%; }
+body[data-rfont="serif"]{ --rfont: Georgia, 'Times New Roman', serif; }
+body[data-rfont="mono"]{ --rfont: var(--mono); }
+body[data-justify="1"] .md-body p{ text-align:justify; }
+body[data-focus="1"] .md-body p{ opacity:.45; transition:opacity .15s; }
+body[data-focus="1"] .md-body p:hover{ opacity:1; }
+/* ==========================================================================
+   THEME TOKENS — copied 1:1 from Heros PDF design system
+   ========================================================================== */
+:root{
+  --r-lg:20px; --r-md:14px; --r-sm:11px; --r-xs:7px;
+  --side-r:26px; --pill:999px;
+  --tb-h:54px; --sb-h:30px; --side-w:308px;
+  --pad:24px;
+  --ease:cubic-bezier(.4,0,.2,1);
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+html[data-theme="light"]{
+  --bg:#e9ecf1;
+  --bg-2:#f4f6f9;
+  --surface:#ffffff;
+  --surface-2:#f3f5f8;
+  --surface-3:#e8ebf0;
+  --surface-hover:#eceff4;
+  --border:#dde2e9;
+  --border-2:#c8cfd9;
+  --text:#14181f;
+  --text-2:#4a5568;
+  --muted:#7b8697;
+  --accent:#2563eb;
+  --accent-h:#1d4ed8;
+  --accent-soft:rgba(37,99,235,.10);
+  --accent-ring:rgba(37,99,235,.28);
+  --on-accent:#ffffff;
+  --shadow-sm:0 1px 2px rgba(16,24,40,.07);
+  --shadow:0 1px 2px rgba(16,24,40,.06), 0 10px 28px -10px rgba(16,24,40,.22);
+  --shadow-lg:0 24px 64px -16px rgba(16,24,40,.32), 0 2px 6px rgba(16,24,40,.08);
+  --page-bg:#ffffff;
+  --page-shadow:0 1px 3px rgba(16,24,40,.16), 0 14px 40px -16px rgba(16,24,40,.34);
+  --viewer-bg:#dfe3ea;
+  --scroll-thumb:#c2cad6;
+  --scroll-thumb-h:#a3adbd;
+  --hl:rgba(255,208,0,.55);
+  --hl-cur:rgba(255,138,0,.75);
+  --danger:#dc2626;
+  --ok:#16a34a;
+}
+html[data-theme="dark"]{
+  --bg:#0e1014;
+  --bg-2:#13161b;
+  --surface:#191d24;
+  --surface-2:#21262e;
+  --surface-3:#2a3038;
+  --surface-hover:#252b34;
+  --border:#2a303a;
+  --border-2:#39414d;
+  --text:#e7eaf0;
+  --text-2:#b0b9c6;
+  --muted:#79839a;
+  --accent:#4c8dff;
+  --accent-h:#6ba0ff;
+  --accent-soft:rgba(76,141,255,.15);
+  --accent-ring:rgba(76,141,255,.4);
+  --on-accent:#ffffff;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -10px rgba(0,0,0,.7);
+  --shadow-lg:0 28px 70px -18px rgba(0,0,0,.85), 0 2px 8px rgba(0,0,0,.5);
+  --page-bg:#ffffff;
+  --page-shadow:0 2px 6px rgba(0,0,0,.5), 0 20px 50px -18px rgba(0,0,0,.85);
+  --viewer-bg:#0a0c0f;
+  --scroll-thumb:#39414d;
+  --scroll-thumb-h:#4c5666;
+  --hl:rgba(255,208,0,.42);
+  --hl-cur:rgba(255,138,0,.65);
+  --danger:#ef4444;
+  --ok:#22c55e;
+}
+
+/* ==========================================================================
+   BASE — copied from Heros PDF
+   ========================================================================== */
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:var(--font); font-size:14px; color:var(--text);
+  background:var(--bg); overflow:hidden;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;padding:0;cursor:pointer}
+a{color:var(--accent);text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-xs)}
+[hidden]{display:none !important}
+
+/* Scrollbars hidden app-wide (scrolling still works everywhere) */
+*{scrollbar-width:none !important;-ms-overflow-style:none !important}
+*::-webkit-scrollbar{width:0 !important;height:0 !important;display:none !important}
+*::-webkit-scrollbar-thumb,*::-webkit-scrollbar-track,*::-webkit-scrollbar-corner{background:transparent !important;border:0 !important}
+/* Ultra-round range sliders */
+input[type=range]{-webkit-appearance:none;appearance:none;height:22px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:var(--surface-3);border:1px solid var(--border)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.35);margin-top:-6px}
+input[type=range]::-moz-range-track{height:8px;border-radius:99px;background:var(--surface-3);border:1px solid var(--border)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.35)}
+input[type=color]{border-radius:12px;border:1px solid var(--border);padding:2px;background:var(--surface-2)}
+
+/* ==========================================================================
+   ICONS — copied from Heros PDF
+   ========================================================================== */
+.ic{
+  width:19px;height:19px;flex:0 0 auto;
+  fill:none;stroke:currentColor;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;
+  display:block;pointer-events:none;
+}
+.ic-sm{width:15px;height:15px}
+.ic-lg{width:22px;height:22px}
+
+/* ==========================================================================
+   APP SHELL — copied from Heros PDF
+   ========================================================================== */
+#app{display:flex;flex-direction:column;height:100dvh;height:100vh;background:var(--bg)}
+
+/* Top bar (floating rounded modern card) */
+.topbar{
+  display:flex;align-items:center;gap:5px;flex-wrap:wrap;
+  padding:8px 12px;min-height:var(--tb-h);
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;box-shadow:var(--shadow);
+  margin:12px 12px 0;
+  position:relative;z-index:40;
+}
+.tb-group{display:flex;align-items:center;gap:3px}
+.tb-group.grow{flex:1 1 auto;justify-content:center;min-width:0}
+.tb-sep{width:1px;height:24px;background:var(--border);margin:0 5px;flex:0 0 auto}
+
+.brand{display:flex;align-items:center;gap:8px;padding:0 6px 0 2px;user-select:none}
+.brand .ic{color:var(--accent)}
+.brand-logo{width:30px;height:30px;border-radius:10px;flex:0 0 auto;object-fit:cover;box-shadow:var(--shadow-sm)}
+.brand-text{font-size:14.5px;font-weight:600;letter-spacing:-.2px;white-space:nowrap}
+.brand-text b{font-weight:800;color:var(--accent)}
+
+/* Buttons — copied */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  height:36px;padding:0 12px;border-radius:13px;
+  background:var(--surface-2);border:1px solid transparent;
+  color:var(--text);font-size:13px;font-weight:500;white-space:nowrap;
+  transition:background .15s var(--ease),color .15s var(--ease),border-color .15s var(--ease),opacity .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:hover:not(:disabled){background:var(--surface-3)}
+.btn:active:not(:disabled){transform:translateY(.5px)}
+.btn:disabled{opacity:.34;cursor:not-allowed}
+.btn.accent{background:var(--accent);color:var(--on-accent);font-weight:600;box-shadow:var(--shadow-sm)}
+.btn.accent:hover{background:var(--accent-h)}
+.btn.ghost{background:transparent;border-color:var(--border)}
+.btn.ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn.danger:hover:not(:disabled){background:rgba(220,38,38,.14);color:var(--danger)}
+
+.ibtn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:13px;
+  color:var(--text-2);transition:background .15s var(--ease),color .15s var(--ease),opacity .15s;
+  -webkit-tap-highlight-color:transparent;flex:0 0 auto;
+}
+.ibtn:hover:not(:disabled){background:var(--surface-2);color:var(--text)}
+.ibtn:disabled{opacity:.3;cursor:not-allowed}
+.ibtn.on{background:var(--accent-soft);color:var(--accent)}
+.ibtn.wide{width:auto;padding:0 11px;gap:7px;font-size:13px;font-weight:500}
+
+/* Workspace pill (replaces pagebox, same roundness contract) */
+.wsbox{
+  display:flex;align-items:center;gap:4px;
+  background:var(--surface-2);border-radius:var(--pill);padding:3px 4px;
+  max-width:100%;
+}
+.wsbox .wsdot{width:10px;height:10px;border-radius:50%;background:var(--accent);margin-left:8px;flex:0 0 auto}
+.wsbox select{
+  max-width:150px;height:32px;background:transparent;border:0;outline:none;
+  font-size:12.5px;font-weight:600;color:var(--text);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;
+}
+.wsbox select option{background:var(--surface);color:var(--text)}
+.wsbox .ibtn{width:32px;height:32px;border-radius:var(--pill)}
+
+.zoomlabel{
+  min-width:56px;height:36px;padding:0 8px;border-radius:var(--pill);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:12.5px;font-weight:600;color:var(--text-2);
+  font-variant-numeric:tabular-nums;transition:background .15s,color .15s;
+}
+.zoomlabel:hover{background:var(--surface-2);color:var(--text)}
+
+.filetag{
+  display:flex;align-items:center;gap:7px;max-width:230px;
+  padding:0 10px;height:36px;border-radius:var(--pill);
+  background:var(--surface-2);font-size:12.5px;color:var(--muted);
+  overflow:hidden;white-space:nowrap;
+}
+.filetag span{overflow:hidden;text-overflow:ellipsis}
+.filetag .ic{color:var(--accent)}
+
+/* Main area */
+.main{flex:1;display:flex;min-height:0;position:relative;gap:0}
+
+/* Sidebar — ULTRA ROUNDED floating card. In panel it is ALWAYS a drawer. */
+.sidebar{
+  position:absolute;top:12px;bottom:12px;left:12px;
+  width:min(330px,88vw);flex:0 0 auto;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--side-r);overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  display:flex;flex-direction:column;min-height:0;
+  transition:transform .2s var(--ease),box-shadow .2s var(--ease);
+  z-index:30;
+  transform:translateX(calc(-100% - 24px));
+  margin:0 !important;
+}
+.sidebar.open{transform:translateX(0)}
+
+.side-tabs{
+  display:flex;gap:5px;padding:6px;margin:12px 12px 0;
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--pill);overflow-x:auto;scrollbar-width:none;
+  flex:0 0 auto;
+}
+.side-tabs::-webkit-scrollbar{display:none}
+.side-tab{
+  flex:1 0 58px;min-width:58px;height:50px;border-radius:var(--pill);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.3px;
+  transition:background .15s,color .15s;-webkit-tap-highlight-color:transparent;
+  border:1px solid transparent;
+}
+.side-tab:hover{background:var(--surface-3);color:var(--text-2)}
+.side-tab.active{background:var(--surface);color:var(--accent);box-shadow:var(--shadow-sm);border-color:var(--border)}
+.side-tab .ic{width:18px;height:18px}
+
+.side-body{flex:1;min-height:0;position:relative;overflow:hidden;background:var(--surface);
+  border-radius:0 0 var(--side-r) var(--side-r)}
+.side-pane{
+  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  padding:14px 14px 18px;display:none;border-radius:0 0 var(--side-r) var(--side-r);
+  scrollbar-width:none;
+}
+.side-pane.active{display:block}
+
+.side-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin:-2px 0 10px;
+}
+.side-title{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
+
+/* File / workspace rows — same language as Heros PDF recent-item */
+.recent-item{
+  display:flex;align-items:center;gap:10px;padding:9px 10px;
+  border-radius:16px;cursor:pointer;transition:background .13s;
+  border:1px solid transparent;
+}
+.recent-item:hover{background:var(--surface-2)}
+.recent-item.active{background:var(--accent-soft);border-color:var(--accent-ring)}
+.recent-item .ico{
+  width:34px;height:34px;border-radius:11px;flex:0 0 auto;
+  background:var(--accent-soft);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+}
+.recent-item .meta{flex:1;min-width:0}
+.recent-item .nm{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-item .sub{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-item .del{opacity:0;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:opacity .15s,background .15s}
+.recent-item:hover .del{opacity:1}
+.recent-item .del:hover{background:rgba(220,38,38,.15);color:var(--danger)}
+.recent-item .cnt{
+  font-size:10.5px;font-weight:800;background:var(--surface-3);color:var(--muted);
+  border-radius:99px;padding:2px 8px;flex:0 0 auto;font-variant-numeric:tabular-nums;
+}
+.recent-item.active .cnt{background:var(--surface);color:var(--accent)}
+
+/* Search pane — copied */
+.search-box{position:relative;margin-bottom:10px}
+.search-box .ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);width:16px;height:16px}
+.search-box input{
+  width:100%;height:38px;padding:0 34px 0 34px;
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--pill);font-size:13px;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.search-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring)}
+.search-box .clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;display:none;align-items:center;justify-content:center;color:var(--muted)}
+.search-box .clear:hover{background:var(--surface-3);color:var(--text)}
+.search-box.has .clear{display:flex}
+
+.search-meta{font-size:12px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.result{
+  padding:9px 10px;border-radius:14px;cursor:pointer;
+  border:1px solid transparent;margin-bottom:4px;
+  transition:background .13s,border-color .13s;
+}
+.result:hover{background:var(--surface-2)}
+.result.active{background:var(--accent-soft);border-color:var(--accent-ring)}
+.result .r-top{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-bottom:3px;font-weight:600}
+.result .r-top .badge{background:var(--surface-3);padding:1px 6px;border-radius:99px;font-size:10px}
+.result .r-txt{font-size:12.5px;line-height:1.45;color:var(--text-2);word-break:break-word;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.result .r-txt em{background:var(--hl);color:var(--text);font-style:normal;border-radius:2px;padding:0 1px}
+
+.placeholder{
+  text-align:center;padding:28px 14px;color:var(--muted);font-size:12.5px;line-height:1.6;
+}
+.placeholder .ic{width:30px;height:30px;margin:0 auto 10px;opacity:.5;stroke-width:1.6}
+
+/* ==========================================================================
+   VIEWER — same shell, markdown document surface
+   ========================================================================== */
+.viewer{
+  flex:1;min-width:0;position:relative;overflow:auto;
+  background:var(--viewer-bg);overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.md-wrap{
+  max-width:760px;margin:0 auto;padding:14px 14px 40px;min-height:100%;
+}
+.md-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.md-bar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 12px;border-bottom:1px solid var(--border);
+}
+.md-crumb{flex:1;min-width:0;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.md-crumb b{color:var(--text);font-weight:700}
+.md-body{
+  padding:20px 20px 26px;font-size:14.5px;line-height:1.7;color:var(--text);
+  word-break:break-word;
+}
+.md-body h1,.md-body h2,.md-body h3,.md-body h4{letter-spacing:-.3px;line-height:1.3;margin:1.1em 0 .5em}
+.md-body h1{font-size:22px;border-bottom:1px solid var(--border);padding-bottom:8px;margin-top:0}
+.md-body h2{font-size:18px}
+.md-body h3{font-size:15.5px}
+.md-body p{margin:.65em 0}
+.md-body ul,.md-body ol{margin:.6em 0;padding-left:24px}
+.md-body li{margin:.28em 0}
+.md-body li.task{display:flex;gap:8px;align-items:flex-start;list-style:none;margin-left:-24px;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:8px 10px}
+.md-body li.task.done span.t{color:var(--muted);text-decoration:line-through}
+/* marked-renderer task items (same card look, clickable, struck when done) */
+.md-body li.task-list-item{display:flex;gap:8px;align-items:flex-start;list-style:none;margin-left:-24px;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:8px 10px}
+.md-body li.task-list-item:has(> input:checked){color:var(--muted);text-decoration:line-through}
+.md-body input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);margin-top:3px;flex:0 0 auto;cursor:pointer}
+.md-body code{font-family:var(--mono);font-size:12.5px;background:var(--surface-3);
+  border:1px solid var(--border);border-radius:7px;padding:1px 6px}
+.md-body pre{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;
+  padding:12px;overflow-x:auto;font-size:12.5px;line-height:1.55}
+.md-body pre code{background:none;border:0;padding:0}
+.md-body blockquote{margin:.8em 0;padding:8px 14px;border-left:3px solid var(--accent);
+  background:var(--accent-soft);border-radius:0 12px 12px 0;color:var(--text-2)}
+.md-body table{width:100%;border-collapse:collapse;margin:.8em 0;font-size:13px;display:block;overflow-x:auto}
+.md-body th,.md-body td{border:1px solid var(--border);padding:7px 10px;text-align:left}
+.md-body th{background:var(--surface-2);font-weight:700}
+.md-body hr{border:0;border-top:1px solid var(--border);margin:18px 0}
+.md-body img{max-width:100%;border-radius:12px}
+.md-body mark.hl{background:var(--hl);border-radius:2px;padding:0 1px}
+.md-body mark.hl.current{background:var(--hl-cur)}
+.md-edit{
+  width:100%;min-height:420px;resize:vertical;
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:14px;font-size:13.5px;line-height:1.6;font-family:var(--mono);
+  outline:none;padding:14px;
+}
+.md-edit:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring)}
+
+/* Empty state — copied */
+.empty{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:var(--viewer-bg);z-index:5;overflow-y:auto;
+}
+.empty-card{
+  width:min(520px,100%);text-align:center;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:26px;padding:40px 30px;box-shadow:var(--shadow-lg);
+  margin:auto;
+}
+.empty-card .big-ico{
+  width:74px;height:74px;margin:0 auto 18px;border-radius:22px;
+  background:linear-gradient(140deg,var(--accent),var(--accent-h));
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  box-shadow:0 12px 28px -10px var(--accent-ring);
+}
+.empty-card .big-ico .ic{width:36px;height:36px;stroke-width:1.8}
+.empty-card .big-ico img{width:74px;height:74px;border-radius:22px;object-fit:cover;display:block}
+.empty-card h1{margin:0 0 8px;font-size:21px;font-weight:700;letter-spacing:-.3px}
+.empty-card p{margin:0 0 22px;font-size:13.5px;color:var(--muted);line-height:1.6}
+.empty-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:22px}
+.empty-features{
+  display:flex;flex-wrap:wrap;gap:7px;justify-content:center;
+  padding-top:20px;border-top:1px solid var(--border);
+}
+.chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 10px;border-radius:999px;background:var(--surface-2);
+  font-size:11.5px;color:var(--text-2);font-weight:500;
+  border:1px solid var(--border);
+}
+.chip .ic{width:13px;height:13px;color:var(--accent)}
+
+/* Drop overlay — copied */
+.drop{
+  position:fixed;inset:0;z-index:200;display:none;
+  align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.drop.show{display:flex}
+.drop-inner{
+  border:2.5px dashed var(--accent);border-radius:26px;
+  padding:52px 66px;text-align:center;background:var(--surface);
+  box-shadow:var(--shadow-lg);max-width:calc(100vw - 40px);
+}
+.drop-inner .ic{width:44px;height:44px;color:var(--accent);margin:0 auto 14px;stroke-width:1.7}
+.drop-inner h2{margin:0 0 6px;font-size:18px;font-weight:700}
+.drop-inner p{margin:0;color:var(--muted);font-size:13px}
+
+/* ==========================================================================
+   STATUS BAR — copied
+   ========================================================================== */
+.statusbar{
+  min-height:var(--sb-h);flex:0 0 auto;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;row-gap:4px;
+  padding:4px 14px;background:var(--surface);border:1px solid var(--border);
+  border-left:0;border-right:0;border-bottom:0;border-radius:18px 18px 0 0;box-shadow:var(--shadow);
+  margin:0;
+  font-size:11.5px;color:var(--muted);overflow:hidden;
+}
+.statusbar .sb-item{display:inline-flex;align-items:center;gap:5px;flex:0 0 auto}
+.statusbar .sb-item .ic{width:13px;height:13px}
+.statusbar .sb-spacer{flex:1 1 auto}
+.statusbar b{color:var(--text-2);font-weight:600;font-variant-numeric:tabular-nums}
+.sb-div{width:1px;height:16px;background:var(--border);flex:0 0 auto}
+.sb-actions{display:flex;align-items:center;gap:2px;flex:0 0 auto}
+.sb-btn{width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);flex:0 0 auto;-webkit-tap-highlight-color:transparent}
+.sb-btn:hover{background:var(--surface-2);color:var(--text)}
+.sb-btn.on{background:var(--accent-soft);color:var(--accent)}
+.sb-btn .ic{width:15px;height:15px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex:0 0 auto}
+.dot.ok{background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 22%,transparent)}
+.dot.busy{background:var(--accent);animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.28}}
+
+/* ==========================================================================
+   TOASTS — copied
+   ========================================================================== */
+.toasts{
+  position:fixed;bottom:calc(var(--sb-h) + 16px);right:18px;z-index:300;
+  display:flex;flex-direction:column;gap:8px;align-items:flex-end;
+  pointer-events:none;max-width:min(360px,calc(100vw - 32px));
+}
+.toast{
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface);color:var(--text);
+  border:1px solid var(--border);border-radius:14px;
+  padding:11px 15px;font-size:13px;box-shadow:var(--shadow-lg);
+  pointer-events:auto;max-width:100%;
+  animation:toastIn .14s var(--ease);
+}
+.toast .ic{width:17px;height:17px;flex:0 0 auto;color:var(--accent)}
+.toast.ok .ic{color:var(--ok)}
+.toast.err .ic{color:var(--danger)}
+.toast span{line-height:1.4;word-break:break-word}
+@keyframes toastIn{from{opacity:0}to{opacity:1}}
+
+/* ==========================================================================
+   DROPDOWN MENU — copied
+   ========================================================================== */
+.menu{
+  position:fixed;z-index:250;min-width:230px;max-height:min(70vh,520px);overflow-y:auto;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;box-shadow:var(--shadow-lg);
+  padding:6px;display:none;
+}
+.menu.show{display:block}
+.menu-item{
+  display:flex;align-items:center;gap:11px;width:100%;
+  padding:9px 11px;border-radius:11px;
+  font-size:13px;color:var(--text-2);text-align:left;
+  transition:background .12s,color .12s;
+}
+.menu-item:hover:not(:disabled){background:var(--surface-2);color:var(--text)}
+.menu-item:disabled{opacity:.36;cursor:not-allowed}
+.menu-item .ic{width:16px;height:16px;color:var(--muted);flex:0 0 auto}
+.menu-item:hover:not(:disabled) .ic{color:var(--accent)}
+.menu-item .lbl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu-item .kbd{
+  font-size:10.5px;font-family:var(--mono);color:var(--muted);
+  background:var(--surface-2);padding:2px 6px;border-radius:var(--r-xs);
+  border:1px solid var(--border);
+}
+.menu-sep{height:1px;background:var(--border);margin:5px 8px}
+.menu-label{
+  padding:8px 11px 4px;font-size:10.5px;font-weight:700;
+  letter-spacing:.7px;text-transform:uppercase;color:var(--muted);
+}
+
+/* ==========================================================================
+   MODAL — copied
+   ========================================================================== */
+.modal-backdrop{
+  position:fixed;inset:0;z-index:400;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(6,8,12,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+}
+.modal-backdrop.show{display:flex}
+.modal{
+  width:min(680px,100%);max-height:min(84vh,760px);
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:22px;box-shadow:var(--shadow-lg);
+  display:flex;flex-direction:column;overflow:hidden;
+  animation:modalIn .12s var(--ease);
+}
+@keyframes modalIn{from{opacity:0}to{opacity:1}}
+.modal-head{
+  display:flex;align-items:center;gap:11px;
+  padding:16px 18px;border-bottom:1px solid var(--border);flex:0 0 auto;
+}
+.modal-head h3{margin:0;font-size:15.5px;font-weight:650;flex:1;letter-spacing:-.2px}
+.modal-head .ic{color:var(--accent)}
+.modal-body{padding:18px;overflow-y:auto;flex:1;min-height:0}
+.modal-foot{
+  padding:13px 18px;border-top:1px solid var(--border);
+  display:flex;gap:9px;justify-content:flex-end;flex:0 0 auto;
+}
+
+/* Shortcuts table — copied */
+.kbd-grid{display:grid;grid-template-columns:1fr auto;gap:9px 18px;align-items:center}
+.kbd-grid .k-label{font-size:13px;color:var(--text-2)}
+.kbd-row{display:flex;gap:5px;justify-content:flex-end}
+kbd{
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  background:var(--surface-2);border:1px solid var(--border);
+  border-bottom-width:2px;border-radius:var(--r-xs);
+  padding:3px 7px;color:var(--text-2);min-width:22px;text-align:center;
+}
+
+/* Features grid — copied */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:11px}
+.feat{
+  display:flex;gap:11px;padding:13px;border-radius:var(--r-md);
+  background:var(--surface-2);border:1px solid var(--border);
+}
+.feat .fi{
+  width:34px;height:34px;border-radius:11px;flex:0 0 auto;
+  background:var(--accent-soft);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+}
+.feat .fi .ic{width:17px;height:17px}
+.feat h4{margin:0 0 3px;font-size:12.8px;font-weight:650}
+.feat p{margin:0;font-size:11.5px;color:var(--muted);line-height:1.45}
+
+/* ==========================================================================
+   PROGRESS BAR — copied
+   ========================================================================== */
+.progress{
+  position:fixed;top:0;left:0;right:0;height:2.5px;z-index:500;
+  background:transparent;pointer-events:none;
+}
+.progress .bar{
+  height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-h));
+  transition:width .2s var(--ease),opacity .3s;border-radius:0 2px 2px 0;
+  box-shadow:0 0 8px var(--accent-ring);
+}
+.progress.done .bar{opacity:0}
+
+/* ==========================================================================
+   POWER PACK extras — copied (pills, stats, tool cards, segs, toggles)
+   ========================================================================== */
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;
+  background:var(--surface-2);border:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text-2)}
+.pill .ic{width:13px;height:13px;color:var(--accent)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
+.stat{background:var(--surface-2);border:1px solid var(--border);border-radius:20px;padding:13px;text-align:center}
+.stat b{display:block;font-size:19px;font-weight:800;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;color:var(--muted);font-weight:600}
+.tool-card{background:var(--surface-2);border:1px solid var(--border);border-radius:20px;padding:14px;margin-bottom:12px}
+.tool-card h4{margin:0 0 4px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.tool-card h4 .ic{width:16px;height:16px;color:var(--accent)}
+.tool-card p{margin:0 0 10px;font-size:12px;color:var(--muted);line-height:1.5}
+.tool-row{display:flex;gap:8px;flex-wrap:wrap}
+.tool-row .btn{flex:1 1 auto;min-width:0;border-radius:13px}
+.seg{display:flex;background:var(--surface-3);border-radius:var(--pill);padding:4px;gap:2px;margin-bottom:10px}
+.seg button{flex:1;height:32px;border-radius:var(--pill);font-size:12px;font-weight:600;color:var(--muted);transition:all .15s}
+.seg button.on{background:var(--surface);color:var(--accent);box-shadow:var(--shadow-sm)}
+.slider-row{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:12px;color:var(--muted)}
+.slider-row input[type=range]{flex:1;accent-color:var(--accent)}
+.slider-row b{min-width:44px;text-align:right;font-variant-numeric:tabular-nums;color:var(--text)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 14px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:18px;margin-bottom:8px;font-size:13px}
+.toggle-row .d{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.45}
+.toggle-row .t{font-weight:600}
+.sw{position:relative;width:40px;height:23px;flex:0 0 auto;cursor:pointer}
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw .tr{position:absolute;inset:0;border-radius:99px;background:var(--surface-3);border:1px solid var(--border-2);transition:background .15s}
+.sw .tr::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw input:checked + .tr{background:var(--accent);border-color:var(--accent)}
+.sw input:checked + .tr::after{transform:translateX(17px)}
+.field{width:100%;height:42px;padding:0 14px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--pill);font-size:13px;outline:none;transition:border-color .15s,box-shadow .15s;margin-bottom:10px}
+.field:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring)}
+textarea.field{height:auto;min-height:76px;padding:10px 12px;resize:vertical;line-height:1.5}
+.profile-hero{display:flex;gap:12px;align-items:center;background:linear-gradient(140deg,var(--accent-soft),transparent);
+  border:1px solid var(--border);border-radius:22px;padding:14px;margin-bottom:12px}
+.avatar{width:50px;height:50px;border-radius:18px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:800;color:#fff;background:linear-gradient(140deg,var(--accent),var(--accent-h));
+  box-shadow:0 8px 20px -8px var(--accent-ring)}
+
+/* Productivity studio — todo rows copied */
+.lap-row,.cnt-row,.todo-row{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:12px;
+  background:var(--surface);border:1px solid var(--border);margin-bottom:7px}
+.todo-check{width:24px;height:24px;border-radius:8px;border:2px solid var(--border-2);flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--surface);padding:0}
+.todo-check.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.todo-check .ic{width:14px;height:14px}
+.todo-txt{flex:1;min-width:0;font-size:13px;line-height:1.4;word-break:break-word}
+.todo-row.done .todo-txt{color:var(--muted);text-decoration:line-through}
+.todo-doc{font-size:10.5px;font-weight:700;color:var(--accent);background:var(--accent-soft);
+  border-radius:99px;padding:1px 8px;flex:0 0 auto;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.goal-bar{height:10px;border-radius:99px;background:var(--surface-3);border:1px solid var(--border);overflow:hidden;margin:6px 0 4px}
+.goal-bar i{display:block;height:100%;width:0%;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-h));transition:width .3s var(--ease)}
+.autosave{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.autosave .dotok{width:7px;height:7px;border-radius:50%;background:var(--ok);flex:0 0 auto}
+.mini-label{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:10px 0 6px}
+.kv{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:5px 0}
+.kv b{color:var(--text);font-variant-numeric:tabular-nums}
+.stamp-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+
+/* night / eye-comfort page modes — copied, applied to markdown card */
+body.night-pages .md-card{filter:invert(.92) hue-rotate(180deg) brightness(.95) contrast(.92)}
+body.sepia-pages .md-card{filter:sepia(.45) brightness(.98)}
+body.dim-pages .md-card{filter:brightness(.82) contrast(.95)}
+body.focus-mode .sidebar{display:none !important}
+/* SILENT INSTANT LOAD — copied */
+#app,.sidebar,.empty-card,.modal,.topbar,.statusbar{animation:none !important}
+body.booting *{animation:none !important;transition:none !important}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+/* ==========================================================================
+   POWER PACK v2 — md+pdf+latex, markers, study, palette (same roundness)
+   ========================================================================== */
+.fbadge{font-size:10px;font-weight:800;border-radius:99px;padding:2px 7px;flex:0 0 auto;letter-spacing:.3px}
+.fbadge.md{background:var(--accent-soft);color:var(--accent)}
+.fbadge.pdf{background:rgba(220,38,38,.14);color:var(--danger)}
+.fbadge.tex{background:rgba(34,197,94,.16);color:var(--ok)}
+.fbadge.txt{background:var(--surface-3);color:var(--muted)}
+.fbadge.bib{background:rgba(180,92,240,.16);color:#b45cf0}
+.type-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.type-chip{flex:1 1 auto;padding:6px 4px;border-radius:var(--pill);background:var(--surface-2);border:1px solid var(--border);font-size:11px;font-weight:700;color:var(--muted);text-align:center}
+.type-chip.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-ring)}
+.fm-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.fm-chips .pill{cursor:pointer}
+.outline-list{list-style:none;margin:0;padding:0}
+.outline-item{display:flex;align-items:flex-start;gap:7px;padding:7px 8px;border-radius:11px;cursor:pointer;font-size:13px;line-height:1.35;color:var(--text-2)}
+.outline-item:hover{background:var(--surface-2);color:var(--text)}
+.outline-item.lvl2{margin-left:12px}.outline-item.lvl3{margin-left:24px}.outline-item.lvl4{margin-left:36px}
+.outline-item .sec-t{margin-left:auto;font-size:10.5px;color:var(--muted);flex:0 0 auto}
+.tag-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);margin-bottom:7px;cursor:pointer}
+.tag-row:hover{border-color:var(--border-2)}
+.tag-row b{color:var(--accent)}
+.callout{margin:.8em 0;padding:10px 14px;border-radius:0 12px 12px 0;border-left:3px solid var(--accent);background:var(--accent-soft)}
+.callout.warn{border-color:#ff8a00;background:rgba(255,138,0,.12)}
+.callout.danger{border-color:var(--danger);background:rgba(220,38,38,.10)}
+.callout.ok{border-color:var(--ok);background:rgba(34,197,94,.10)}
+.callout b{display:block;font-size:11px;letter-spacing:.6px;text-transform:uppercase;margin-bottom:4px}
+.md-body mark.mk{border-radius:3px;padding:0 2px}
+.md-body u{text-decoration-thickness:2px}
+.md-body details{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:8px 12px;margin:.7em 0}
+.md-body details summary{cursor:pointer;font-weight:700}
+.md-body .toc{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:10px 14px;margin:.8em 0}
+.md-body .toc a{display:block;padding:3px 0;font-size:13px}
+.md-body .codebar{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);background:var(--surface-3);border:1px solid var(--border);border-bottom:0;border-radius:12px 12px 0 0;padding:5px 10px}
+.md-body .codebar button{margin-left:auto;font-size:11px;font-weight:700;color:var(--accent)}
+.md-body .codebar + pre{border-radius:0 0 12px 12px;margin-top:0}
+.md-body th{cursor:pointer;user-select:none}
+.md-body .katex{font-size:1.05em}
+.md-body .math-block{overflow-x:auto;padding:8px;background:var(--surface-2);border-radius:12px;margin:.7em 0;text-align:center}
+.md-body .mmd{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:12px;margin:.8em 0;text-align:center}
+.md-body .mmd svg{max-width:100%;height:auto}
+.md-body .mmd-err{background:var(--surface-3);border:1px dashed var(--border-2);border-radius:12px;padding:10px;font-size:12px;color:var(--muted);text-align:left;white-space:pre-wrap}
+.md-body .rtl{direction:rtl;text-align:right}
+.sec-badge{font-size:10.5px;font-weight:700;color:var(--muted);background:var(--surface-3);border-radius:99px;padding:1px 8px;margin-left:8px;vertical-align:middle}
+.habit-grid{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin:8px 0}
+.habit-grid button{aspect-ratio:1;border-radius:6px;background:var(--surface-3);border:1px solid var(--border);font-size:0}
+.habit-grid button.on{background:var(--accent);border-color:var(--accent)}
+.flash-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px}
+.flash-card .q{font-weight:800;font-size:14px;margin-bottom:8px}
+.flash-card .a{background:var(--surface-2);border-radius:12px;padding:10px;font-size:13px}
+.insert-bar{display:flex;gap:4px;flex-wrap:wrap;padding:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;margin-bottom:10px}
+.insert-bar button{padding:6px 9px;border-radius:10px;background:var(--surface);border:1px solid var(--border);font-size:12px;font-weight:700}
+.insert-bar button:hover{border-color:var(--accent);color:var(--accent)}
+.sel-bar{position:fixed;z-index:120;display:flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:var(--pill);box-shadow:var(--shadow-lg);padding:4px 6px}
+.sel-bar[hidden]{display:none}
+.sel-bar .sel-btn{width:32px;height:32px}
+.sel-bar .sel-btn:hover{background:var(--accent-soft);color:var(--accent)}
+.palette-list{max-height:50vh;overflow-y:auto}
+.palette-item{display:flex;gap:10px;align-items:center;width:100%;padding:10px 12px;border-radius:12px;font-size:13px;text-align:left}
+.palette-item:hover,.palette-item.sel{background:var(--surface-2)}
+.palette-item .kbd{margin-left:auto}
+.pdf-pages{display:flex;flex-direction:column;gap:14px;padding:14px;align-items:center}
+.pdf-page{position:relative;background:#fff;border-radius:6px;box-shadow:var(--page-shadow);overflow:hidden;max-width:100%}
+.pdf-page canvas{display:block;width:100%;height:auto}
+.pdf-thumb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pdf-thumb{border-radius:12px;overflow:hidden;background:var(--surface-2);border:2px solid transparent;cursor:pointer}
+.pdf-thumb.sel{border-color:var(--accent)}
+.pdf-thumb canvas{width:100%;display:block;background:#fff}
+.tex-src{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:12px;font-family:var(--mono);font-size:12px;line-height:1.7;overflow-x:auto;white-space:pre}
+.tex-src .c{color:var(--muted)} .tex-src .cmd{color:var(--accent);font-weight:700}
+.freq-bar{height:8px;border-radius:99px;background:var(--surface-3);overflow:hidden;margin-top:4px}
+.freq-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-h))}
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.diff-col{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:10px;font-size:12px;white-space:pre-wrap}
+.diff-col .del{background:rgba(220,38,38,.18)} .diff-col .add{background:rgba(34,197,94,.18)}
+.meter{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.star-btn{opacity:.45}
+.recent-item.starred .star-btn{opacity:1;color:var(--accent)}
+
+/* Wave 3 — folder groups, find, drafts */
+.grp{margin-bottom:6px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface-2)}
+.grp > summary{cursor:pointer;padding:8px 12px;font-size:12px;font-weight:800;color:var(--text-2);list-style:none;display:flex;gap:8px;align-items:center}
+.grp > summary::-webkit-details-marker{display:none}
+.grp > summary .cnt{margin-left:auto;font-size:10.5px;background:var(--surface-3);border-radius:99px;padding:1px 8px;color:var(--muted)}
+.grp .grp-items{padding:0 6px 6px}
+.grp .grp-items .recent-item{background:var(--surface)}
+.cdot{width:12px;height:12px;border-radius:50%;flex:0 0 auto;border:2px solid var(--border-2);cursor:pointer;padding:0}
+.md-edit.nowrap{white-space:pre;overflow-x:auto}
+#dirtyDot{transition:background .2s}
+#findBar .field,#readBar .field{min-width:0}
+#featCats{position:sticky;top:0;background:var(--surface);padding:4px 0;z-index:2}
+
+/* Panel compact tweaks (panel is narrow by nature) */
+.topbar{padding:6px 8px;gap:4px 3px;margin:8px 8px 0;border-radius:16px;row-gap:6px}
+.brand-text{font-size:13.5px}
+.btn .btn-label{display:inline}
+.filetag{max-width:150px}
+.viewer{background:var(--viewer-bg)}
+.md-wrap{padding:10px 10px 40px}
+.md-body{padding:16px 14px 22px;font-size:14px}
+.toasts{left:10px;right:10px;align-items:stretch}
+.feat-grid{grid-template-columns:1fr}
+.side-backdrop{
+  position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:29;display:none;
+  backdrop-filter:blur(2px);
+}
+.side-backdrop.show{display:block}
+
+@media print{
+  body{display:none}
+}
+</style>
+</head>
+<body class="booting">
+
+<!-- SVG ICON SPRITE — same icon language as Heros PDF -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><polyline points="12 7 12 12 15.5 14"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><line x1="12" y1="16.5" x2="12" y2="11.5"/><line x1="12" y1="7.8" x2="12.01" y2="7.8"/></symbol>
+<symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2.5"/><line x1="6" y1="10" x2="6.01" y2="10"/><line x1="10" y1="10" x2="10.01" y2="10"/><line x1="14" y1="10" x2="14.01" y2="10"/><line x1="18" y1="10" x2="18.01" y2="10"/><line x1="7" y1="14" x2="17" y2="14"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="12" cy="19" r="1.4"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6.5 9 17.5 4 12.5"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+<symbol id="i-sidebar" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2.5"/><line x1="9.5" y1="3" x2="9.5" y2="21"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></symbol>
+<symbol id="i-palette" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><circle cx="8.5" cy="9.5" r="1.2"/><circle cx="15.5" cy="9.5" r="1.2"/><circle cx="9" cy="15" r="1.2"/><circle cx="15" cy="15" r="1.2"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol>
+<symbol id="i-hub" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></symbol>
+<symbol id="i-upload-cloud" viewBox="0 0 24 24"><path d="M16 16l-4-4-4 4"/><path d="M12 12v9"/><path d="M20.4 18.4A5 5 0 0 0 18 9h-1.3A8 8 0 1 0 3 16.3"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><line x1="2.5" y1="12" x2="21.5" y2="12"/><path d="M12 2.5a15 15 0 0 1 0 19 15 15 0 0 1 0-19z"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+<symbol id="i-smartphone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="12" y1="18" x2="12.01" y2="18"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><circle cx="9" cy="7" r="2.2"/><line x1="4" y1="17" x2="20" y2="17"/><circle cx="15" cy="17" r="2.2"/></symbol>
+<symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><polyline points="3 3 3 8 8 8"/><polyline points="12 7.5 12 12 15.5 14"/></symbol>
+<symbol id="i-eye-dim" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/><line x1="4" y1="20" x2="20" y2="4"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+<symbol id="i-text" viewBox="0 0 24 24"><polyline points="5 7 5 4 19 4 19 7"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="9" y1="20" x2="15" y2="20"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3.5 20 12 6 20.5 6 3.5"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+</defs>
+</svg>
+
+<div id="app">
+
+  <!-- ============ TOP BAR — same floating rounded card as Heros PDF ============ -->
+  <header class="topbar">
+    <div class="tb-group">
+      <button class="ibtn" id="btnSidebar" title="Toggle panel sidebar" aria-label="Toggle sidebar">
+        <svg class="ic"><use href="#i-sidebar"/></svg>
+      </button>
+      <div class="brand">
+        <img class="brand-logo" src="icons/logo.png" alt="Heros Todo logo">
+        <span class="brand-text">Heros<b>Todo</b></span>
+      </div>
+    </div>
+    <div class="tb-sep"></div>
+    <div class="tb-group">
+      <button class="btn accent" id="btnOpen" title="Pick a folder (new workspace)">
+        <svg class="ic"><use href="#i-folder"/></svg>
+        <span class="btn-label">Open</span>
+      </button>
+      <div class="wsbox" title="Active workspace">
+        <span class="wsdot" id="wsDot"></span>
+        <select id="wsSelect" aria-label="Active workspace"></select>
+        <button class="ibtn" id="btnRefresh" title="Rescan folder">
+          <svg class="ic ic-sm"><use href="#i-refresh"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="tb-group grow"></div>
+    <div class="tb-group">
+      <button class="ibtn" id="btnSearchTop" title="Search all markdown (Ctrl+F)">
+        <svg class="ic"><use href="#i-search"/></svg>
+      </button>
+      <button class="ibtn" id="btnEdit" title="Edit markdown (E)" disabled>
+        <svg class="ic"><use href="#i-edit"/></svg>
+      </button>
+      <button class="ibtn" id="btnNight" title="Eye-comfort page mode">
+        <svg class="ic"><use href="#i-eye-dim"/></svg>
+      </button>
+      <button class="ibtn" id="btnTheme" title="Toggle theme">
+        <svg class="ic" id="themeIcon"><use href="#i-moon"/></svg>
+      </button>
+      <button class="ibtn" id="btnMenu" title="More options">
+        <svg class="ic"><use href="#i-more"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <div class="side-backdrop" id="sideBackdrop"></div>
+
+    <!-- ======= SIDEBAR — same ultra-rounded card, 5 panes ======= -->
+    <aside class="sidebar" id="sidebar">
+      <div class="side-tabs" role="tablist">
+        <button class="side-tab active" data-pane="files" role="tab" title="Files — md, pdf, tex">
+          <svg class="ic"><use href="#i-file"/></svg><span>Files</span>
+        </button>
+        <button class="side-tab" data-pane="outline" role="tab" title="Outline — TOC">
+          <svg class="ic"><use href="#i-book"/></svg><span>Outline</span>
+        </button>
+        <button class="side-tab" data-pane="search" role="tab" title="Search all files">
+          <svg class="ic"><use href="#i-search"/></svg><span>Search</span>
+        </button>
+        <button class="side-tab" data-pane="tags" role="tab" title="Tags & backlinks">
+          <svg class="ic"><use href="#i-zap"/></svg><span>Tags</span>
+        </button>
+        <button class="side-tab" data-pane="workspaces" role="tab" title="Workspaces — many folders">
+          <svg class="ic"><use href="#i-layers"/></svg><span>Spaces</span>
+        </button>
+        <button class="side-tab" data-pane="todo" role="tab" title="Todo — tasks from markdown">
+          <svg class="ic"><use href="#i-list"/></svg><span>Todo</span>
+        </button>
+        <button class="side-tab" data-pane="study" role="tab" title="Study — cards, quiz, timers, habits">
+          <svg class="ic"><use href="#i-clock"/></svg><span>Study</span>
+        </button>
+        <button class="side-tab" data-pane="features" role="tab" title="All features (F)">
+          <svg class="ic"><use href="#i-grid"/></svg><span>150+</span>
+        </button>
+        <button class="side-tab" data-pane="hub" role="tab" title="Hub — profile, stats, settings">
+          <svg class="ic"><use href="#i-hub"/></svg><span>Hub</span>
+        </button>
+      </div>
+
+      <div class="side-body">
+        <!-- Files -->
+        <div class="side-pane active" id="pane-files">
+          <div class="search-box" id="fileBox">
+            <svg class="ic"><use href="#i-search"/></svg>
+            <input type="text" id="fileFilter" placeholder="Filter md · pdf · tex…" autocomplete="off" spellcheck="false">
+            <button class="clear" id="fileClear" title="Clear">
+              <svg class="ic ic-sm"><use href="#i-x"/></svg>
+            </button>
+          </div>
+          <div class="type-row" id="typeRow">
+            <button class="type-chip on" data-type="all">All</button>
+            <button class="type-chip" data-type="md">MD</button>
+            <button class="type-chip" data-type="pdf">PDF</button>
+            <button class="type-chip" data-type="tex">LaTeX</button>
+            <button class="type-chip" data-type="txt">Text</button>
+          </div>
+          <div class="tool-row" style="margin-bottom:10px">
+            <select id="fileSort" class="field" style="flex:1;margin:0;height:34px;font-size:12px" title="Sort files">
+              <option value="name-asc">Name A–Z</option>
+              <option value="name-desc">Name Z–A</option>
+              <option value="mtime-desc">Newest first</option>
+              <option value="mtime-asc">Oldest first</option>
+              <option value="size-desc">Largest first</option>
+              <option value="tasks-desc">Most open tasks</option>
+            </select>
+            <button class="btn ghost" id="btnGroup" style="flex:0 0 auto;height:34px;font-size:12px" title="Group by folder">Folders</button>
+          </div>
+          <div class="side-head">
+            <span class="side-title" id="filesTitle">Files</span>
+            <span class="pill"><svg class="ic"><use href="#i-file"/></svg><span id="filesCount">0</span></span>
+          </div>
+          <div class="mini-label" id="favLabel" hidden>Starred</div>
+          <div id="favList"></div>
+          <div id="fileList"></div>
+          <div class="placeholder" id="filesEmpty">
+            <svg class="ic"><use href="#i-file"/></svg>
+            No files yet — open a folder
+          </div>
+          <div class="mini-label">Recent across workspaces</div>
+          <div id="recentList"></div>
+          <div class="tool-row" style="margin-top:8px">
+            <button class="btn ghost" id="btnNewNote" title="New markdown note in this workspace"><svg class="ic ic-sm"><use href="#i-plus"/></svg>New note</button>
+            <button class="btn ghost" id="btnNewFolder" title="New subfolder (writable workspaces)"><svg class="ic ic-sm"><use href="#i-folder"/></svg>Folder</button>
+          </div>
+          <div class="tool-row" style="margin-top:8px">
+            <button class="btn ghost" id="btnRename" style="flex:1;height:30px;font-size:12px" title="Rename open file"><svg class="ic ic-sm"><use href="#i-edit"/></svg>Rename</button>
+            <button class="btn ghost" id="btnDupl" style="flex:1;height:30px;font-size:12px" title="Duplicate open file"><svg class="ic ic-sm"><use href="#i-copy"/></svg>Copy</button>
+            <button class="btn ghost danger" id="btnDelFile" style="flex:1;height:30px;font-size:12px" title="Delete open file"><svg class="ic ic-sm"><use href="#i-trash"/></svg>Del</button>
+          </div>
+        </div>
+
+        <!-- Outline -->
+        <div class="side-pane" id="pane-outline">
+          <div class="side-head">
+            <span class="side-title">Outline — this file</span>
+            <button class="btn ghost" id="btnCopyOutline" style="height:30px;font-size:12px" title="Copy outline as text"><svg class="ic ic-sm"><use href="#i-copy"/></svg>Copy</button>
+          </div>
+          <div id="outlineList"></div>
+          <div class="placeholder" id="outlineEmpty">
+            <svg class="ic"><use href="#i-book"/></svg>
+            Open a note, TEX or PDF to see its outline
+          </div>
+          <div class="mini-label">PDF pages</div>
+          <div class="pdf-thumb-grid" id="pdfThumbs"></div>
+        </div>
+
+        <!-- Search -->
+        <div class="side-pane" id="pane-search">
+          <div class="search-box" id="searchBox">
+            <svg class="ic"><use href="#i-search"/></svg>
+            <input type="text" id="searchInput" placeholder="Search all markdown…" autocomplete="off" spellcheck="false">
+            <button class="clear" id="searchClear" title="Clear">
+              <svg class="ic ic-sm"><use href="#i-x"/></svg>
+            </button>
+          </div>
+          <div class="tool-row" style="margin-bottom:10px">
+            <button class="btn ghost" id="swCase" style="flex:1;height:30px;font-size:11.5px" title="Case sensitive">Aa</button>
+            <button class="btn ghost" id="swWhole" style="flex:1;height:30px;font-size:11.5px" title="Whole word only">Whole</button>
+            <button class="btn ghost" id="swRegex" style="flex:1;height:30px;font-size:11.5px" title="Regular expression">.*</button>
+            <button class="btn ghost" id="btnSearchExport" style="flex:1;height:30px;font-size:11.5px" title="Download results as TXT"><svg class="ic ic-sm"><use href="#i-download"/></svg>TXT</button>
+          </div>
+          <div class="search-meta" id="searchMeta" hidden>
+            <span id="searchCount">0 results</span>
+            <span style="display:flex;gap:2px">
+              <button class="ibtn" id="searchPrev" style="width:26px;height:26px" title="Previous match">
+                <svg class="ic ic-sm"><use href="#i-x"/></svg>
+              </button>
+              <button class="ibtn" id="searchNext" style="width:26px;height:26px" title="Next match">
+                <svg class="ic ic-sm"><use href="#i-check"/></svg>
+              </button>
+            </span>
+          </div>
+          <div id="searchResults"></div>
+          <div class="placeholder" id="searchEmpty">
+            <svg class="ic"><use href="#i-search"/></svg>
+            Type to search across all files
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="side-pane" id="pane-tags">
+          <div class="side-head"><span class="side-title">Tags &amp; backlinks</span><span class="pill"><svg class="ic"><use href="#i-zap"/></svg><span id="tagCount">0</span></span></div>
+          <div id="tagList"></div>
+          <div class="placeholder" id="tagEmpty"><svg class="ic"><use href="#i-zap"/></svg>No #tags yet — write #todo in any note</div>
+          <div class="mini-label">Backlinks to open note</div>
+          <div id="backList"></div>
+          <div class="placeholder" id="backEmpty" style="padding:12px 8px">No [[wikilinks]] point here yet</div>
+        </div>
+
+        <!-- Workspaces -->
+        <div class="side-pane" id="pane-workspaces">
+          <div class="search-box" id="wsBox">
+            <svg class="ic"><use href="#i-search"/></svg>
+            <input type="text" id="wsFilter" placeholder="Filter workspaces…" autocomplete="off" spellcheck="false">
+            <button class="clear" id="wsClear" title="Clear">
+              <svg class="ic ic-sm"><use href="#i-x"/></svg>
+            </button>
+          </div>
+          <div class="side-head">
+            <span class="side-title">Workspaces — many folders</span>
+            <span class="pill"><svg class="ic"><use href="#i-zap"/></svg>multi</span>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-folder"/></svg>Add a folder</h4>
+            <p>Each workspace remembers its own folder, files and last opened note. Everything stays on this device.</p>
+            <div class="tool-row">
+              <button class="btn accent" id="btnAddWs"><svg class="ic"><use href="#i-plus"/></svg>Choose folder</button>
+            </div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn" id="btnAddFiles"><svg class="ic"><use href="#i-file"/></svg>Pick .md files</button>
+            </div>
+          </div>
+          <div id="wsList"></div>
+          <div class="placeholder" id="wsEmpty">
+            <svg class="ic"><use href="#i-layers"/></svg>
+            No workspaces yet — add your first folder
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-shield"/></svg>Private by design</h4>
+            <p>Folder access uses your browser picker only. Heros Todo never uploads anything. Permission can be revoked anytime by removing the workspace.</p>
+          </div>
+        </div>
+
+        <!-- Todo -->
+        <div class="side-pane" id="pane-todo">
+          <div class="side-head"><span class="side-title">Todo — from your markdown</span></div>
+          <div class="tool-card">
+            <div class="autosave"><span class="dotok"></span><span id="toolsSavedLbl">Tasks live inside your .md files</span></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-list"/></svg>Tasks</h4>
+            <p>Checkbox lines (<b>- [ ]</b> / <b>- [x]</b>) from all files. Toggle here writes back to the file when permission allows.</p>
+            <div class="seg" id="todoScopeSeg">
+              <button data-tscope="file" class="on">This file</button>
+              <button data-tscope="all">Everything</button>
+            </div>
+            <div class="seg" id="todoFilterSeg" style="margin-top:8px">
+              <button data-tfilter="all" class="on">All</button>
+              <button data-tfilter="active">Active</button>
+              <button data-tfilter="done">Done</button>
+            </div>
+            <div class="seg" id="todoDueSeg" style="margin-top:8px">
+              <button data-due="any" class="on">Anytime</button>
+              <button data-due="overdue">Overdue</button>
+              <button data-due="today">Today</button>
+              <button data-due="upcoming">Upcoming</button>
+            </div>
+            <div class="tool-row" style="margin-top:8px;margin-bottom:10px">
+              <button class="btn ghost" id="btnToday" style="flex:1;height:30px;font-size:12px" title="Overdue + today across workspace">Today</button>
+              <button class="btn ghost" id="btnDaily" style="flex:1;height:30px;font-size:12px" title="Open today's daily note">Daily</button>
+              <button class="btn ghost" id="btnRandom" style="flex:1;height:30px;font-size:12px" title="Open a random note">Shuffle</button>
+            </div>
+            <div class="tool-row" style="margin-bottom:10px;margin-top:10px">
+              <input class="field" id="todoInput" placeholder="New task — press Enter" maxlength="140" style="margin-bottom:0;flex:1">
+              <button class="btn accent" id="btnTodoAdd" style="flex:0 0 auto"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
+            </div>
+            <div id="todoList"></div>
+            <div class="placeholder" id="todoEmpty" style="padding:12px 8px">No tasks yet — add one above</div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn ghost" id="btnTodoClear" title="Delete all completed tasks">Clear done</button>
+              <button class="btn ghost" id="btnTodoExport" title="Download tasks as TXT"><svg class="ic ic-sm"><use href="#i-download"/></svg>TXT</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Study : flashcards + quiz + timers + habits + notes -->
+        <div class="side-pane" id="pane-study">
+          <div class="side-head"><span class="side-title">Study studio</span><span class="pill"><svg class="ic"><use href="#i-clock"/></svg>free</span></div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-clock"/></svg>Stopwatch</h4>
+            <div class="sw-digits" id="swDigits" style="font-family:var(--mono);font-size:30px;font-weight:800;text-align:center;background:var(--surface-3);border:1px solid var(--border);border-radius:18px;padding:10px;margin-bottom:10px">00:00<small style="font-size:13px;color:var(--muted)">.00</small></div>
+            <div class="tool-row">
+              <button class="btn accent" id="btnSwStart">Start</button>
+              <button class="btn" id="btnSwLap">Lap</button>
+              <button class="btn ghost" id="btnSwReset">Reset</button>
+            </div>
+            <div id="swLaps"></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-history"/></svg>Pomodoro focus</h4>
+            <p>Work / break cycles with offline chime. Docked pill in status bar.</p>
+            <div class="slider-row"><span>Work</span><input type="range" id="pomWork" min="5" max="90" value="25"><b id="pomWorkLbl">25m</b></div>
+            <div class="slider-row"><span>Break</span><input type="range" id="pomBreak" min="1" max="30" value="5"><b id="pomBreakLbl">5m</b></div>
+            <div class="tool-row">
+              <button class="btn accent" id="btnPomStart">Focus</button>
+              <button class="btn ghost" id="btnPomStop">Stop</button>
+            </div>
+            <div class="kv"><span>Phase</span><b id="pomPhase">idle</b></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-plus"/></svg>Counters</h4>
+            <div class="tool-row" style="margin-bottom:10px">
+              <input class="field" id="cntName" placeholder="New counter" maxlength="40" style="margin-bottom:0;flex:1">
+              <button class="btn accent" id="btnCntAdd" style="flex:0 0 auto"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
+            </div>
+            <div id="cntList"></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-chart"/></svg>Habits — 14 days</h4>
+            <div class="tool-row" style="margin-bottom:10px">
+              <input class="field" id="habitName" placeholder="New habit" maxlength="40" style="margin-bottom:0;flex:1">
+              <button class="btn accent" id="btnHabitAdd" style="flex:0 0 auto"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
+            </div>
+            <div id="habitList"></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-star"/></svg>Flashcards</h4>
+            <p>Auto-deck from headings, <b>Q:/A:</b>, <b>bold</b> terms and <b>==cloze==</b>.</p>
+            <div class="tool-row">
+              <button class="btn accent" id="btnCardsGen"><svg class="ic"><use href="#i-zap"/></svg>Generate</button>
+              <button class="btn" id="btnQuizGo"><svg class="ic"><use href="#i-play"/></svg>Quiz me</button>
+            </div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn" id="btnAnkiExp"><svg class="ic"><use href="#i-download"/></svg>Anki TSV</button>
+              <button class="btn" id="btnAnkiImp"><svg class="ic"><use href="#i-upload-cloud"/></svg>Import</button>
+            </div>
+            <div id="cardList" style="margin-top:10px"></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-edit"/></svg>Note for this file</h4>
+            <textarea class="field" id="docNote" placeholder="Persistent note attached to this file…" maxlength="2000"></textarea>
+            <div class="tool-row">
+              <button class="btn" id="btnNoteSel"><svg class="ic"><use href="#i-plus"/></svg>From selection</button>
+              <button class="btn" id="btnMarksExp"><svg class="ic"><use href="#i-download"/></svg>Marks TXT</button>
+            </div>
+            <div class="mini-label">Markers in this file</div>
+            <div id="markList"></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-text"/></svg>Writing goals</h4>
+            <div class="kv"><span>Session words</span><b id="goalSess">0 / 300</b></div>
+            <div class="goal-bar"><i id="goalSessFill"></i></div>
+            <div class="kv"><span>Today</span><b id="goalDay">0 / 1000</b></div>
+            <div class="goal-bar"><i id="goalDayFill"></i></div>
+          </div>
+        </div>
+
+        <!-- Features : searchable 150+ directory -->
+        <div class="side-pane" id="pane-features">
+          <div class="search-box" id="featBox">
+            <svg class="ic"><use href="#i-search"/></svg>
+            <input type="text" id="featFilter" placeholder="Search 200+ features… (F)" autocomplete="off" spellcheck="false">
+            <button class="clear" id="featClear" title="Clear"><svg class="ic ic-sm"><use href="#i-x"/></svg></button>
+          </div>
+          <div class="type-row" id="featCats">
+            <button class="type-chip on" data-cat="all">All</button>
+            <button class="type-chip" data-cat="files">Files</button>
+            <button class="type-chip" data-cat="read">Read</button>
+            <button class="type-chip" data-cat="write">Write</button>
+            <button class="type-chip" data-cat="pdf">PDF</button>
+            <button class="type-chip" data-cat="study">Study</button>
+            <button class="type-chip" data-cat="time">Time</button>
+            <button class="type-chip" data-cat="export">Export</button>
+          </div>
+          <div class="side-head"><span class="side-title">Every tool — free &amp; unlimited</span><span class="pill"><svg class="ic"><use href="#i-grid"/></svg><span id="featCount">200+</span></span></div>
+          <div id="featList"></div>
+        </div>
+
+        <!-- Hub -->
+        <div class="side-pane" id="pane-hub">
+          <div class="side-head"><span class="side-title">Hub — everything</span></div>
+          <div class="profile-hero">
+            <div class="avatar" id="profileAvatar">H</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:800;font-size:14px" id="profileName">My Notes</div>
+              <div style="font-size:11.5px;color:var(--muted)" id="profileSub">Local profile · private</div>
+            </div>
+            <button class="ibtn" id="btnProfileEdit" title="Edit profile"><svg class="ic ic-sm"><use href="#i-edit"/></svg></button>
+          </div>
+          <div class="stat-grid">
+            <div class="stat"><b id="stWs">0</b><span>Workspaces</span></div>
+            <div class="stat"><b id="stFiles">0</b><span>Files md·pdf·tex</span></div>
+            <div class="stat"><b id="stTasks">0</b><span>Tasks</span></div>
+            <div class="stat"><b id="stDone">0</b><span>Done</span></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-eye"/></svg>Reading comfort</h4>
+            <p>Recolor the note itself — easy on the eyes at night.</p>
+            <div class="seg" id="pageModeSeg">
+              <button data-pm="off" class="on">Normal</button>
+              <button data-pm="night">Night</button>
+              <button data-pm="sepia">Sepia</button>
+              <button data-pm="dim">Dim</button>
+            </div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-text"/></svg>This note</h4>
+            <p>Copy, download or inspect the open file.</p>
+            <div class="kv"><span>Words</span><b id="kvWords">—</b></div>
+            <div class="kv"><span>Reading time</span><b id="kvRead">—</b></div>
+            <div class="kv"><span>Characters</span><b id="kvChars">—</b></div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn" id="btnCopyMd"><svg class="ic"><use href="#i-copy"/></svg>Copy</button>
+              <button class="btn" id="btnExportMd"><svg class="ic"><use href="#i-download"/></svg>.MD</button>
+              <button class="btn" id="btnExportTxt"><svg class="ic"><use href="#i-file"/></svg>.TXT</button>
+            </div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-palette"/></svg>Look &amp; feel — rounded</h4>
+            <p>Your accent, your reading size. Instant, silent.</p>
+            <div class="slider-row"><span>Accent</span><input type="color" id="accentPick" value="#4c8dff" style="width:52px;height:32px;flex:0 0 auto"><b id="accentLbl">custom</b></div>
+            <div class="tool-row" style="margin-bottom:10px">
+              <button class="swatch" data-accent="#4c8dff" style="background:#4c8dff;width:30px;height:30px;border-radius:50%;border:2px solid var(--border-2)" title="Blue"></button>
+              <button class="swatch" data-accent="#22c55e" style="background:#22c55e;width:30px;height:30px;border-radius:50%;border:2px solid var(--border-2)" title="Green"></button>
+              <button class="swatch" data-accent="#b45cf0" style="background:#b45cf0;width:30px;height:30px;border-radius:50%;border:2px solid var(--border-2)" title="Purple"></button>
+              <button class="swatch" data-accent="#ff6b6a" style="background:#ff6b6a;width:30px;height:30px;border-radius:50%;border:2px solid var(--border-2)" title="Red"></button>
+              <button class="swatch" data-accent="#ff8a00" style="background:#ff8a00;width:30px;height:30px;border-radius:50%;border:2px solid var(--border-2)" title="Orange"></button>
+              <button class="swatch" data-accent="#14b8a6" style="background:#14b8a6;width:30px;height:30px;border-radius:50%;border:2px solid var(--border-2)" title="Teal"></button>
+            </div>
+            <div class="slider-row"><span>Text size</span><input type="range" id="fontSize" min="12" max="20" step="1" value="14"><b id="fontSizeLbl">14</b></div>
+            <div class="slider-row"><span>Line height</span><input type="range" id="lineHeight" min="14" max="24" step="1" value="17"><b id="lineHeightLbl">1.7</b></div>
+            <div class="seg" id="widthSeg">
+              <button data-w="narrow">Narrow</button>
+              <button data-w="comfort" class="on">Comfort</button>
+              <button data-w="wide">Wide</button>
+              <button data-w="full">Full</button>
+            </div>
+            <div class="seg" id="fontSeg">
+              <button data-f="sans" class="on">Sans</button>
+              <button data-f="serif">Serif</button>
+              <button data-f="mono">Mono</button>
+            </div>
+            <div class="toggle-row"><div><div class="t">Justify text</div><div class="d">Even left and right edges</div></div><label class="sw"><input type="checkbox" id="swJustify"><span class="tr"></span></label></div>
+            <div class="toggle-row"><div><div class="t">Sentence focus</div><div class="d">Dim all but hovered paragraph</div></div><label class="sw"><input type="checkbox" id="swFocusSent"><span class="tr"></span></label></div>
+            <div class="toggle-row"><div><div class="t">True newlines</div><div class="d">Single breaks render as breaks</div></div><label class="sw"><input type="checkbox" id="swBreaks" checked><span class="tr"></span></label></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-zap"/></svg>Builder &amp; lab — free</h4>
+            <p>Lint, summary, keywords, readability, diff, links, spell, templates, URL, CSS.</p>
+            <div class="tool-row">
+              <button class="btn" id="btnLint"><svg class="ic"><use href="#i-list"/></svg>Lint</button>
+              <button class="btn" id="btnSummary"><svg class="ic"><use href="#i-text"/></svg>Summary</button>
+            </div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn" id="btnKeywords"><svg class="ic"><use href="#i-chart"/></svg>Keywords</button>
+              <button class="btn" id="btnReadability"><svg class="ic"><use href="#i-eye"/></svg>Readability</button>
+            </div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn" id="btnDiff"><svg class="ic"><use href="#i-layers"/></svg>Diff 2 files</button>
+              <button class="btn" id="btnLinkCheck"><svg class="ic"><use href="#i-globe"/></svg>Links</button>
+            </div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn" id="btnSpell"><svg class="ic"><use href="#i-check"/></svg>Spell scan</button>
+              <button class="btn" id="btnTemplates"><svg class="ic"><use href="#i-grid"/></svg>Templates</button>
+            </div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn" id="btnFromUrl"><svg class="ic"><use href="#i-globe"/></svg>From URL</button>
+              <button class="btn" id="btnPasteNew"><svg class="ic"><use href="#i-copy"/></svg>Paste new</button>
+            </div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-download"/></svg>Exports — unlimited</h4>
+            <p>Every format, no paywall, fully local.</p>
+            <div class="tool-row">
+              <button class="btn" id="btnExpHtml"><svg class="ic"><use href="#i-globe"/></svg>HTML</button>
+              <button class="btn" id="btnExpPdf"><svg class="ic"><use href="#i-file"/></svg>Print/PDF</button>
+            </div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn" id="btnExpJson"><svg class="ic"><use href="#i-hub"/></svg>JSON</button>
+              <button class="btn" id="btnExpCsv"><svg class="ic"><use href="#i-chart"/></svg>CSV freq</button>
+            </div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn" id="btnStudyPack"><svg class="ic"><use href="#i-save"/></svg>Study pack</button>
+              <button class="btn" id="btnMergePdf"><svg class="ic"><use href="#i-layers"/></svg>Merge PDFs</button>
+            </div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-sliders"/></svg>Speed &amp; CSS</h4>
+            <p>Perf mode paints text instantly for huge files. Custom CSS applies live.</p>
+            <div class="toggle-row"><div><div class="t">Perf mode</div><div class="d">Skip math + diagrams until asked</div></div><label class="sw"><input type="checkbox" id="swPerf"><span class="tr"></span></label></div>
+            <textarea class="field" id="customCss" placeholder="Custom CSS — e.g. .md-body{font-size:15px}" maxlength="4000"></textarea>
+            <div class="tool-row"><button class="btn" id="btnCssApply"><svg class="ic"><use href="#i-check"/></svg>Apply CSS</button></div>
+            <div class="kv"><span>Last render</span><b id="renderMeter">—</b></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-sliders"/></svg>Behaviour</h4>
+            <p>Panel-only, silent, local.</p>
+            <div class="toggle-row"><div><div class="t">Resume last note</div><div class="d">Reopen where you left off</div></div><label class="sw"><input type="checkbox" id="swResume" checked><span class="tr"></span></label></div>
+            <div class="toggle-row"><div><div class="t">Auto rescan</div><div class="d">Refresh list when panel opens</div></div><label class="sw"><input type="checkbox" id="swAuto" checked><span class="tr"></span></label></div>
+          </div>
+          <div class="tool-card">
+            <h4><svg class="ic"><use href="#i-zap"/></svg>Discover</h4>
+            <p>Keys, backup, restore and reset.</p>
+            <div class="tool-row">
+              <button class="btn accent" id="btnShortcuts"><svg class="ic"><use href="#i-keyboard"/></svg>Keys</button>
+            </div>
+            <div class="tool-row" style="margin-top:8px">
+              <button class="btn" id="btnBackupAll"><svg class="ic"><use href="#i-download"/></svg>Backup</button>
+              <button class="btn" id="btnRestoreAll"><svg class="ic"><use href="#i-upload-cloud"/></svg>Restore</button>
+              <button class="btn danger" id="btnResetAll"><svg class="ic"><use href="#i-trash"/></svg>Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======= VIEWER ======= -->
+    <div class="viewer" id="viewer">
+      <div class="md-wrap" id="mdWrap" hidden>
+        <div class="md-card">
+          <div class="md-bar">
+            <div class="md-crumb" id="mdCrumb"><b>No file</b></div>
+            <span class="fbadge md" id="mdTypeBadge">MD</span>
+            <span class="pill" id="mdTaskPill" hidden><svg class="ic"><use href="#i-list"/></svg><span id="mdTaskLbl">0 tasks</span></span>
+            <span class="meter" id="mdMeter"></span>
+            <button class="ibtn" id="btnPaletteTop" style="width:30px;height:30px" title="Commands (Ctrl+K)"><svg class="ic ic-sm"><use href="#i-zap"/></svg></button>
+            <button class="ibtn" id="btnFindTop" style="width:30px;height:30px" title="Find in file"><svg class="ic ic-sm"><use href="#i-search"/></svg></button>
+            <button class="ibtn" id="btnReadTop" style="width:30px;height:30px" title="Read aloud"><svg class="ic ic-sm"><use href="#i-play"/></svg></button>
+            <button class="ibtn" id="btnCopyTop" style="width:30px;height:30px" title="Copy markdown"><svg class="ic ic-sm"><use href="#i-copy"/></svg></button>
+            <button class="ibtn" id="btnEditTop" style="width:30px;height:30px" title="Edit (E)"><svg class="ic ic-sm"><use href="#i-edit"/></svg></button>
+          </div>
+          <div class="md-bar" id="pdfBar" hidden>
+            <button class="ibtn" id="pdfFirst" style="width:30px;height:30px" title="First page"><svg class="ic ic-sm"><use href="#i-history"/></svg></button>
+            <button class="ibtn" id="pdfPrev" style="width:30px;height:30px" title="Previous page"><svg class="ic ic-sm"><use href="#i-x"/></svg></button>
+            <input class="field" id="pdfPage" type="number" value="1" min="1" style="width:64px;margin:0;text-align:center">
+            <span class="pill" id="pdfTotal">–</span>
+            <button class="ibtn" id="pdfNext" style="width:30px;height:30px" title="Next page"><svg class="ic ic-sm"><use href="#i-check"/></svg></button>
+            <button class="ibtn" id="pdfZoomOut" style="width:30px;height:30px" title="Zoom out"><svg class="ic ic-sm"><use href="#i-minus"/></svg></button>
+            <span class="pill" id="pdfZoomLbl">100%</span>
+            <button class="ibtn" id="pdfZoomIn" style="width:30px;height:30px" title="Zoom in"><svg class="ic ic-sm"><use href="#i-plus"/></svg></button>
+            <button class="ibtn" id="pdfPng" style="width:30px;height:30px" title="Page → PNG"><svg class="ic ic-sm"><use href="#i-download"/></svg></button>
+          </div>
+          <div class="md-bar" id="findBar" hidden>
+            <svg class="ic ic-sm"><use href="#i-search"/></svg>
+            <input class="field" id="findInput" placeholder="Find in file…" autocomplete="off" spellcheck="false" style="flex:1;margin:0;height:32px">
+            <span class="pill" id="findCount">0</span>
+            <button class="btn ghost" id="findPrev" style="height:30px;font-size:12px" title="Previous">↑</button>
+            <button class="btn ghost" id="findNext" style="height:30px;font-size:12px" title="Next">↓</button>
+            <button class="ibtn" id="findClose" style="width:30px;height:30px" title="Close"><svg class="ic ic-sm"><use href="#i-x"/></svg></button>
+          </div>
+          <div class="md-bar" id="readBar" hidden>
+            <svg class="ic ic-sm"><use href="#i-play"/></svg>
+            <span class="pill">Reading aloud</span>
+            <input type="range" id="ttsRate" min="5" max="20" value="10" style="flex:1" title="Speed">
+            <button class="btn ghost" id="btnTtsStop" style="height:30px;font-size:12px" title="Stop"><svg class="ic ic-sm"><use href="#i-stop"/></svg></button>
+          </div>
+          <div style="padding:8px 12px 0" id="readProgWrap" hidden>
+            <div class="goal-bar" style="margin:0"><i id="readProgFill"></i></div>
+          </div>
+          <div class="md-body" id="mdBody"></div>
+          <div class="pdf-pages" id="pdfPages" hidden></div>
+          <div style="padding:0 20px 6px" id="texWrap" hidden>
+            <div class="tex-src" id="texSrc"></div>
+            <div class="mini-label">Math preview (offline KaTeX)</div>
+            <div class="md-body" id="texMath" style="padding-top:6px"></div>
+          </div>
+          <div style="padding:0 20px 20px" id="mdEditWrap" hidden>
+            <div class="insert-bar" id="insertBar">
+              <button data-ins="bold" title="Bold">B</button>
+              <button data-ins="h2" title="Heading">H</button>
+              <button data-ins="link" title="Link">Link</button>
+              <button data-ins="table" title="Table">Table</button>
+              <button data-ins="task" title="Task">- [ ]</button>
+              <button data-ins="math" title="Inline math">$</button>
+              <button data-ins="mathblock" title="Math block">$$</button>
+              <button data-ins="mermaid" title="Mermaid">Graph</button>
+              <button data-ins="callout" title="Callout">Note</button>
+              <button data-ins="toc" title="Table of contents">TOC</button>
+              <button data-ins="details" title="Details">Fold</button>
+              <button data-ins="sort" title="Sort lines A–Z">Sort</button>
+              <button data-ins="replace" title="Find & replace">A⇄B</button>
+            </div>
+            <textarea class="md-edit" id="mdEdit" spellcheck="false"></textarea>
+            <div class="tool-row" style="margin-top:8px;margin-bottom:8px;align-items:center">
+              <span class="dot" id="dirtyDot" style="background:var(--ok)" title="Saved"></span>
+              <span class="meter" id="editCounts">0 words</span>
+              <span style="flex:1"></span>
+              <button class="btn ghost" id="btnWrap" style="height:28px;font-size:11px" title="Toggle word wrap">Wrap</button>
+              <button class="btn ghost" id="btnTableGen" style="height:28px;font-size:11px" title="Insert table">Table…</button>
+              <button class="btn ghost" id="btnTocIns" style="height:28px;font-size:11px" title="Insert headings TOC">TOC ↓</button>
+            </div>
+            <div class="tool-row" style="margin-top:10px">
+              <button class="btn accent" id="btnSaveMd"><svg class="ic"><use href="#i-save"/></svg>Save (Ctrl+S)</button>
+              <button class="btn ghost" id="btnCancelEdit">Cancel</button>
+            </div>
+            <p style="font-size:11.5px;color:var(--muted)" id="saveHint">Saving writes back to the picked file when permission allows, otherwise it downloads a copy.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty" id="empty">
+        <div class="empty-card">
+          <div class="big-ico"><img src="icons/logo.png" alt="Heros Todo logo"></div>
+          <h1>Open a folder to begin</h1>
+          <p>Pick any folder — Heros Todo lists every <b>.md · .pdf · .tex · .txt</b> file inside it. Add many folders as workspaces. Panel-only, 100% local.</p>
+          <div class="empty-actions">
+            <button class="btn accent" id="btnEmptyOpen">
+              <svg class="ic"><use href="#i-upload-cloud"/></svg> Choose folder
+            </button>
+            <button class="btn ghost" id="btnEmptyFiles">
+              <svg class="ic"><use href="#i-file"/></svg> Pick .md files
+            </button>
+            <button class="btn ghost" id="btnEmptyDemo">
+              <svg class="ic"><use href="#i-zap"/></svg> Load demo
+            </button>
+          </div>
+          <div class="empty-features">
+            <span class="chip"><svg class="ic"><use href="#i-layers"/></svg> Multi-workspaces</span>
+            <span class="chip"><svg class="ic"><use href="#i-file"/></svg> MD · PDF · TEX · TXT</span>
+            <span class="chip"><svg class="ic"><use href="#i-text"/></svg> LaTeX math</span>
+            <span class="chip"><svg class="ic"><use href="#i-grid"/></svg> Diagrams</span>
+            <span class="chip"><svg class="ic"><use href="#i-list"/></svg> Tasks - [ ]</span>
+            <span class="chip"><svg class="ic"><use href="#i-search"/></svg> Full-text search</span>
+            <span class="chip"><svg class="ic"><use href="#i-palette"/></svg> Dark &amp; Light</span>
+            <span class="chip"><svg class="ic"><use href="#i-eye-dim"/></svg> Night pages</span>
+            <span class="chip"><svg class="ic"><use href="#i-smartphone"/></svg> Panel-only</span>
+            <span class="chip"><svg class="ic"><use href="#i-shield"/></svg> 100% local</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STATUS BAR — copied ============ -->
+  <footer class="statusbar">
+    <span class="sb-item"><span class="dot" id="statusDot"></span><span id="statusText">Ready</span></span>
+    <span class="sb-item"><svg class="ic"><use href="#i-file"/></svg><b id="sbFiles">0</b>&nbsp;files</span>
+    <span class="sb-item"><svg class="ic"><use href="#i-list"/></svg><b id="sbTasks">0</b>&nbsp;tasks</span>
+    <span class="sb-spacer"></span>
+    <span class="sb-item" id="sbWs">No workspace</span>
+    <span class="sb-item" id="sbPom" hidden><b id="sbPomLbl">🍅 25:00</b></span>
+    <span class="sb-item"><svg class="ic"><use href="#i-text"/></svg><b id="sbZoom">100%</b></span>
+    <span class="sb-div"></span>
+    <span class="sb-actions">
+      <button class="sb-btn" id="sbRefresh" title="Rescan folder"><svg class="ic"><use href="#i-refresh"/></svg></button>
+      <button class="sb-btn" id="sbEdit" title="Edit (E)"><svg class="ic"><use href="#i-edit"/></svg></button>
+      <button class="sb-btn" id="sbNight" title="Night / sepia pages (N)"><svg class="ic"><use href="#i-eye-dim"/></svg></button>
+      <button class="sb-btn" id="sbTheme" title="Toggle theme"><svg class="ic"><use href="#i-palette"/></svg></button>
+    </span>
+  </footer>
+</div>
+
+<!-- ============ OVERLAYS — copied ============ -->
+<div class="progress" id="progress"><div class="bar" id="progressBar"></div></div>
+
+<div class="drop" id="dropOverlay">
+  <div class="drop-inner">
+    <svg class="ic"><use href="#i-upload-cloud"/></svg>
+    <h2>Drop your folder here</h2>
+    <p>Release to add it as a workspace</p>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+<div class="menu" id="menu"></div>
+<div class="sel-bar" id="selBar" hidden>
+  <button class="ibtn sel-btn" id="selH" title="Highlight (H)"><svg class="ic"><use href="#i-text"/></svg></button>
+  <button class="ibtn sel-btn" id="selU" title="Underline (U)"><svg class="ic"><use href="#i-check"/></svg></button>
+  <button class="ibtn sel-btn" id="selS" title="Strike (S)"><svg class="ic"><use href="#i-x"/></svg></button>
+  <button class="ibtn sel-btn" id="selCopy" title="Copy (C)"><svg class="ic"><use href="#i-copy"/></svg></button>
+  <button class="ibtn sel-btn" id="selNote" title="Note from selection"><svg class="ic ic-sm"><use href="#i-plus"/></svg></button>
+</div>
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modal"></div></div>
+<input type="file" id="folderInput" webkitdirectory directory multiple hidden>
+<input type="file" id="mdFileInput" accept=".md,.markdown,.txt,.tex,.latex,.bib,.pdf" multiple hidden>
+<input type="file" id="restoreInput" accept="application/json,.json" hidden>
+<input type="file" id="ankiInput" accept=".tsv,.txt" hidden>
+
+<script src="vendor/marked.min.js"></script>
+<script src="vendor/katex.min.js"></script>
+<script src="vendor/pdf.min.js"></script>
+<script src="vendor/pdf-lib.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

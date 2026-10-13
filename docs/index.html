@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Heros Todo — fast, private, unlimited Markdown + PDF + LaTeX panel studio. Multi-workspaces, tasks, diagrams, study tools. Dark + Light, 100% local, free forever.">
+<title>Heros Todo — Markdown · PDF · LaTeX Panel Studio</title>
+<link rel="icon" type="image/png" href="../todo-panel-extension/icons/icon32.png">
+<style>
+:root{
+  --bg:#0e1014; --surface:#191d24; --surface-2:#21262e; --surface-3:#2a3038;
+  --border:#2a303a; --text:#e7eaf0; --text-2:#b0b9c6; --muted:#79839a;
+  --accent:#4c8dff; --accent-h:#6ba0ff; --accent-soft:rgba(76,141,255,.15);
+  --pill:999px; --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+header.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+header.top .wrap{display:flex;align-items:center;gap:12px;padding:12px 20px}
+header.top img{width:34px;height:34px;border-radius:11px}
+header.top b{font-size:17px;letter-spacing:-.3px}
+header.top b span{color:var(--accent)}
+header.top nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+header.top nav a{color:var(--text-2);text-decoration:none;font-size:13px;font-weight:600;padding:8px 12px;border-radius:var(--pill)}
+header.top nav a:hover{background:var(--surface-2);color:var(--text)}
+.hero{text-align:center;padding:72px 20px 40px}
+.hero .badge{display:inline-flex;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--pill);padding:6px 14px;font-size:12.5px;color:var(--text-2);font-weight:600}
+.hero .badge i{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.2)}
+.hero h1{font-size:clamp(30px,5vw,52px);letter-spacing:-1px;line-height:1.15;margin:22px 0 12px}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--muted);font-size:16px;max-width:640px;margin:0 auto 28px}
+.btnrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:14px;font-weight:700;font-size:14px;text-decoration:none;border:1px solid transparent}
+.btn.accent{background:var(--accent);color:#fff}
+.btn.accent:hover{background:var(--accent-h)}
+.btn.ghost{background:transparent;border-color:var(--border);color:var(--text)}
+.btn.ghost:hover{background:var(--surface-2)}
+.stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:14px 22px;text-align:center;min-width:130px}
+.stat b{display:block;font-size:24px;letter-spacing:-.5px}
+.stat span{font-size:12px;color:var(--muted);font-weight:600}
+section{padding:36px 0}
+h2{font-size:24px;letter-spacing:-.4px;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:18px}
+.card h3{margin:0 0 6px;font-size:15px}
+.card p{margin:0;font-size:13px;color:var(--muted)}
+.card .n{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:12px;border-radius:99px;padding:2px 10px;margin-bottom:8px}
+.steps{display:grid;gap:10px;counter-reset:step}
+.step{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 18px;font-size:14px}
+.step b{color:var(--accent)}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:var(--surface-3);border:1px solid var(--border);border-radius:7px;padding:1px 7px}
+pre{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;overflow-x:auto;font-size:13px}
+.faq details{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:8px}
+.faq summary{cursor:pointer;font-weight:700}
+footer{border-top:1px solid var(--border);padding:28px 0 60px;color:var(--muted);font-size:13px;text-align:center}
+footer a{color:var(--accent);text-decoration:none}
+@media (max-width:640px){.hero{padding:48px 16px 28px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <img src="../todo-panel-extension/icons/icon128.png" alt="Heros Todo logo">
+  <b>Heros<span>Todo</span></b>
+  <nav><a href="#features">Features</a><a href="#install">Install</a><a href="#faq">FAQ</a><a href="https://github.com/Ahmedbakr78/Heros_Todo">GitHub</a></nav>
+</div></header>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="badge"><i></i> v2.1.0 · 229 tools · 100% local · free forever</span>
+    <h1>Your notes, tasks, PDFs and math.<br><span>One private panel.</span></h1>
+    <p>Heros Todo turns the browser sidebar into a complete studio: every Markdown, PDF, TEX and TXT in any folder you pick — with real clickable tasks, offline LaTeX, lazy diagrams, flashcards, pomodoro, habits and 40+ commands. No account. No tracking. No limits.</p>
+    <div class="btnrow">
+      <a class="btn accent" href="https://github.com/Ahmedbakr78/Heros_Todo/releases/latest">Download v2.1.0</a>
+      <a class="btn ghost" href="#install">Install in 30 seconds</a>
+      <a class="btn ghost" href="https://github.com/Ahmedbakr78/Heros_Todo">Star on GitHub</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>229</b><span>feature cards</span></div>
+      <div class="stat"><b>9</b><span>sidebar panes</span></div>
+      <div class="stat"><b>2</b><span>permissions only</span></div>
+      <div class="stat"><b>0</b><span>servers · trackers</span></div>
+      <div class="stat"><b>∞</b><span>files · tasks · merges</span></div>
+    </div>
+  </div>
+
+  <section id="features">
+    <h2>Everything, unlimited</h2>
+    <p class="sub">Press <code>F</code> inside the app for the searchable 229-card directory.</p>
+    <div class="grid">
+      <div class="card"><span class="n">Files</span><h3>Every file, one tree</h3><p>MD · PDF · TEX · TXT · BIB with badges, folder groups, 6 sorts, stars, recents, unlimited workspaces with pins and colors.</p></div>
+      <div class="card"><span class="n">Tasks</span><h3>Checkboxes that mean it</h3><p>Click any <code>- [ ]</code> to edit the real file line. Priorities, due dates, overdue red, Today view, daily notes.</p></div>
+      <div class="card"><span class="n">Read</span><h3>Perfect rendering</h3><p>GFM tables, footnotes, callouts, wikilinks, tags, outline spy, RTL, CJK counts, find, regex, read-aloud.</p></div>
+      <div class="card"><span class="n">Math</span><h3>Offline LaTeX</h3><p>KaTeX with bundled fonts: <code>$</code> <code>$$</code> <code>\( \)</code> <code>\[ \]</code>, currency-safe, plus TEX outline and BIB browser.</p></div>
+      <div class="card"><span class="n">Diagrams</span><h3>Mermaid, lazy</h3><p>9 diagram types rendered in idle time, themed, SVG export, perf-mode skip for huge notes.</p></div>
+      <div class="card"><span class="n">PDF</span><h3>Studio in the panel</h3><p>Lazy DPR-capped pages, jump, zoom, outline, search, thumbnails, password unlock, PNG, merge.</p></div>
+      <div class="card"><span class="n">Study</span><h3>Remember everything</h3><p>Markers, flashcards, quiz + score, Anki TSV round-trip, study packs, notes.</p></div>
+      <div class="card"><span class="n">Time</span><h3>Beat the clock</h3><p>Stopwatch + laps, pomodoro + chime, counters, 14-day habits + streaks, goals, tracker.</p></div>
+      <div class="card"><span class="n">Build</span><h3>A lab, not a box</h3><p>Drafts, wrap, table/TOC generators, templates, lint, diff, spell, custom CSS.</p></div>
+    </div>
+  </section>
+
+  <section id="install">
+    <h2>Install in 30 seconds</h2>
+    <p class="sub">Chrome, Edge, Brave, Opera, Arc — any Chromium browser.</p>
+    <div class="steps">
+      <div class="step"><b>1.</b> Download the release ZIP (or <code>git clone https://github.com/Ahmedbakr78/Heros_Todo.git</code>).</div>
+      <div class="step"><b>2.</b> Open <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>) and enable <b>Developer mode</b>.</div>
+      <div class="step"><b>3.</b> <b>Load unpacked</b> → select <code>Heros_Todo/todo-panel-extension/</code>.</div>
+      <div class="step"><b>4.</b> Pin Heros Todo, click the icon — the panel opens. Choose a folder or <b>Load demo</b>.</div>
+    </div>
+    <p class="sub" style="margin-top:14px">Updating? Press <b>Reload ↻</b> on the extension card — Hub must read <code>v2.1.0</code>.</p>
+  </section>
+
+  <section id="faq" class="faq">
+    <h2>Questions</h2>
+    <p class="sub">Full 20-question list in the README.</p>
+    <details><summary>Is it really free?</summary><p>Yes — MIT licensed, 229 tools, unlimited everything, no accounts.</p></details>
+    <details><summary>Where do my files go?</summary><p>Nowhere. They stay on your disk; the app holds only permission handles and your marks/tasks locally.</p></details>
+    <details><summary>“Could not read folder: NotFoundError”?</summary><p>The saved folder link died — open Spaces and press ↻ on that workspace to re-pick it.</p></details>
+    <details><summary>Checkboxes don't click?</summary><p>Reload the extension card — you run an old copy. Since v2.1 every box toggles the real line.</p></details>
+    <details><summary>How do I move machines?</summary><p>Hub → Backup → copy the JSON → Restore. Re-pick folder workspaces once.</p></details>
+  </section>
+
+  <footer>
+    Heros Todo v2.1.0 · MIT · by <a href="https://github.com/Ahmedbakr78">Ahmedbakr78</a> ·
+    <a href="https://github.com/Ahmedbakr78/Heros_Todo">Repo</a> ·
+    <a href="https://github.com/Ahmedbakr78/Heros_Todo/releases/latest">Releases</a> ·
+    Design-forged with Heros PDF &amp; Heros Markdown (read-only references, never modified)
+  </footer>
+</div>
+</body>
+</html>

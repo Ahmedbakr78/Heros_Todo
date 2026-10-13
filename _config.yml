@@ -1,0 +1,11 @@
+title: Heros Todo
+description: Fast, private, unlimited Markdown + PDF + LaTeX panel studio. Multi-workspaces, tasks, study tools. 100% local, free forever.
+theme: minima
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
+exclude:
+  - todo-panel-extension/vendor/
+  - .github/

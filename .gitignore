@@ -1,0 +1,13 @@
+# Heros Todo — never upload private notes or local backups
+*.log
+.DS_Store
+Thumbs.db
+*~
+*.bak
+heros-todo-backup*.json
+*-backup.json
+study-pack*.md
+diagram*.svg
+merged*.pdf
+page-*.png
+node_modules/
