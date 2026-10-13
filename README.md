@@ -13,7 +13,7 @@
 [![Panel Only](https://img.shields.io/badge/panel-side_panel_only-green?style=for-the-badge)](https://developer.chrome.com/docs/extensions/reference/sidePanel/)
 [![100% Local](https://img.shields.io/badge/privacy-100%25%20local-success?style=for-the-badge)](#privacy-and-security)
 [![Free Forever](https://img.shields.io/badge/price-free_forever-gold?style=for-the-badge)](#why-heros-todo)
-[![245 Features](https://img.shields.io/badge/features-245-8A2BE2?style=for-the-badge)](./FEATURES.md)
+[![Features](https://img.shields.io/badge/features-236-8A2BE2?style=for-the-badge)](./FEATURES.md)
 [![Dark + Light](https://img.shields.io/badge/theme-dark_light_system-8A2BE2?style=for-the-badge)](#themes-and-eye-comfort)
 
 <br/>
@@ -27,7 +27,7 @@
 [![Brave](https://img.shields.io/badge/Brave-supported-FB542B?style=flat-square&logo=brave&logoColor=white)](#installation--30-seconds)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](./LICENSE)
 
-**Website:** `https://ahmedbakr78.github.io/Heros_Todo/`  |  **Extension folder:** [`todo-panel-extension/`](./todo-panel-extension/)  |  **All 245 features:** [`FEATURES.md`](./FEATURES.md)  |  **Issues:** [Report a bug](https://github.com/Ahmedbakr78/Heros_Todo/issues/new/choose)  |  **Ideas:** [Request it](https://github.com/Ahmedbakr78/Heros_Todo/issues/new/choose)
+**Website:** `https://ahmedbakr78.github.io/Heros_Todo/`  |  **Extension folder:** [`todo-panel-extension/`](./todo-panel-extension/)  |  **All features:** [`FEATURES.md`](./FEATURES.md)  |  **Issues:** [Report a bug](https://github.com/Ahmedbakr78/Heros_Todo/issues/new/choose)  |  **Ideas:** [Request it](https://github.com/Ahmedbakr78/Heros_Todo/issues/new/choose)
 
 > **One-line description for the GitHub About box (copy-paste, no emojis):**
 > `Heros Todo — fast, private, unlimited Markdown + PDF + LaTeX panel studio. Multi-workspaces, tasks, diagrams, study tools. Dark + Light, 100% local, free forever.`
@@ -133,7 +133,7 @@ readability, diff + patch, link check, spell scan, custom CSS. TASKS:
 modal, daily + random notes, checklist import, TXT export. COMFORT: dark /
 light / system, 6 accents, night / sepia / dim, 4 widths, 3 fonts, justify,
 sentence focus, focus mode, fullscreen + present. COMMANDS: Ctrl+K palette
-(40+), F directory (245 cards, 8 categories). PRIVACY: sidePanel + storage
+(40+). PRIVACY: sidePanel + storage
 permissions only, no tabs, no servers, no analytics. PRICE: free forever,
 unlimited files, tasks, merges and diagrams, MIT open source. Browsers:
 Chrome, Edge, Brave, Opera, Arc and any Chromium browser.
@@ -154,7 +154,7 @@ Heros Todo is the opposite:
 | 100 percent private | Files never leave your device. No account, no tracking, no analytics, no server. IndexedDB + storage.local only |
 | Free and unlimited | No note limits, no paywalled export, no "3 free diagrams per day". Merge, quiz, track, back up — forever |
 | Panel-first | Lives in the side panel next to your work. No tab juggling, no window management |
-| Power-user | Regex search, wikilinks, tags, outline spy, flashcards, Anki, pomodoro, habits, diff, lint, palette, 245 tools |
+| Power-user | Regex search, wikilinks, tags, outline spy, flashcards, Anki, pomodoro, habits, diff, lint, palette |
 
 ---
 
@@ -192,7 +192,7 @@ Heros Todo is the opposite:
 ## Feature Universe — The Complete List
 
 The printable, grouped, 220-row list lives in [`FEATURES.md`](./FEATURES.md).
-The searchable, categorized 245-card directory lives in-app — press `F`.
+The complete grouped list lives in [`FEATURES.md`](./FEATURES.md) — 236 rows, every one free and unlimited.
 
 ### A. Folders, files & workspaces
 
@@ -255,7 +255,7 @@ The searchable, categorized 245-card directory lives in-app — press `F`.
 
 ### I. Commands, comfort, platform
 
-- [x] `Ctrl+K` palette (40+), `F` directory (245 cards, 8 categories)
+- [x] `Ctrl+K` palette (40+)
 - [x] Dark / Light / System, 6 accents, night / sepia / dim, widths, fonts, justify, focus
 - [x] Silent boot, debounced engine, capped everything, safe sanitize, offline, MIT
 
@@ -665,7 +665,7 @@ flowchart TB
 
 1. Click the icon → panel opens (if a tab opened instead, you loaded the wrong folder).
 2. Hub profile line reads `v2.1.0` (proves the new code is running — always press **Reload ↻** on the extension card after updating files).
-3. Press `F` → 245 cards; open demo → math renders, diagram renders, `- [ ]` clicks.
+3. Open `Ctrl+K` → 40+ commands; open demo → math renders, diagram renders, `- [ ]` clicks.
 
 ### Local files note
 
@@ -707,7 +707,7 @@ Picker, drag & drop and the demo need **no** extra permission. `file://` deep-li
 
 | Keys | Action | Keys | Action |
 |---|---|---|---|
-| Ctrl+K | Command palette | F | 245-card directory |
+| Ctrl+K | Command palette (40+) | Esc | Close dialog |
 | Ctrl+F | Workspace search | Ctrl+Shift+F | Find in file |
 | Ctrl+B | Sidebar drawer | E / Ctrl+S | Edit / save |
 | Ctrl+Enter (editor) | Toggle task line | O | Todo scope |
@@ -715,7 +715,7 @@ Picker, drag & drop and the demo need **no** extra permission. `file://` deep-li
 | T | Theme (dark·light·system) | N | Page mode |
 | + / - | Font size | j / k / / | Vim scroll + search |
 | Alt+1–6 (editor) | Templates | ? | Help |
-| P / F11 | Present / fullscreen | Esc | Close dialog |
+| P / F11 | Present / fullscreen | - | - |
 
 ---
 
@@ -985,7 +985,7 @@ Rules: one logical change per PR, vanilla only, capped work, panel parity at 360
 |---|---|
 | App code | ~3,500 lines JS + ~1,500 lines HTML/CSS, zero frameworks |
 | Vendored engines | marked, KaTeX + fonts, Mermaid (lazy), pdf.js + worker, pdf-lib |
-| In-app feature cards | 245 across 8 categories (press `F`) |
+| Documented features | 236 rows in FEATURES.md |
 | Documented rows | 220 in `FEATURES.md` |
 | Diagrams in README | 16 (all render on GitHub) |
 | Permissions | 2 (`sidePanel`, `storage`) |
@@ -1084,7 +1084,7 @@ gantt
 ```
 
 ```mermaid
-pie title Heros Todo 245 cards by category
+pie title Heros Todo capabilities by area
     "Read" : 65
     "App + comfort" : 45
     "Write + builder" : 39
@@ -1131,7 +1131,7 @@ pie title Heros Todo 245 cards by category
 
 **Vim keys?** `j`/`k` scroll, `/` searches, `gg`-style jumps via outline, `Alt+1–6` templates in the editor.
 
-**Is it really free?** Yes — MIT, 245 tools, unlimited files/tasks/merges/diagrams, no accounts.
+**Is it really free?** Yes — MIT, unlimited files/tasks/merges/diagrams, no accounts.
 
 **Where do I ask for more?** Feature-request issue (one idea each) — see [REPO_META](./REPO_META.md) and [CONTRIBUTING](./CONTRIBUTING.md).
 

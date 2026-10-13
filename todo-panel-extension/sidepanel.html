@@ -910,9 +910,6 @@ body.present #findBar,body.present #readBar{display:none}
         <button class="side-tab" data-pane="study" role="tab" title="Study — cards, quiz, timers, habits">
           <svg class="ic"><use href="#i-clock"/></svg><span>Study</span>
         </button>
-        <button class="side-tab" data-pane="features" role="tab" title="All features (F)">
-          <svg class="ic"><use href="#i-grid"/></svg><span>150+</span>
-        </button>
         <button class="side-tab" data-pane="hub" role="tab" title="Hub — profile, stats, settings">
           <svg class="ic"><use href="#i-hub"/></svg><span>Hub</span>
         </button>
@@ -1177,27 +1174,6 @@ body.present #findBar,body.present #readBar{display:none}
           </div>
         </div>
 
-        <!-- Features : searchable 150+ directory -->
-        <div class="side-pane" id="pane-features">
-          <div class="search-box" id="featBox">
-            <svg class="ic"><use href="#i-search"/></svg>
-            <input type="text" id="featFilter" placeholder="Search 200+ features… (F)" autocomplete="off" spellcheck="false">
-            <button class="clear" id="featClear" title="Clear"><svg class="ic ic-sm"><use href="#i-x"/></svg></button>
-          </div>
-          <div class="type-row" id="featCats">
-            <button class="type-chip on" data-cat="all">All</button>
-            <button class="type-chip" data-cat="files">Files</button>
-            <button class="type-chip" data-cat="read">Read</button>
-            <button class="type-chip" data-cat="write">Write</button>
-            <button class="type-chip" data-cat="pdf">PDF</button>
-            <button class="type-chip" data-cat="study">Study</button>
-            <button class="type-chip" data-cat="time">Time</button>
-            <button class="type-chip" data-cat="export">Export</button>
-          </div>
-          <div class="side-head"><span class="side-title">Every tool — free &amp; unlimited</span><span class="pill"><svg class="ic"><use href="#i-grid"/></svg><span id="featCount">200+</span></span></div>
-          <div id="featList"></div>
-        </div>
-
         <!-- Hub -->
         <div class="side-pane" id="pane-hub">
           <div class="side-head"><span class="side-title">Hub — everything</span></div>
@@ -1347,7 +1323,6 @@ body.present #findBar,body.present #readBar{display:none}
             <span class="meter" id="mdMeter"></span>
             <button class="ibtn" id="btnPaletteTop" style="width:30px;height:30px" title="Commands (Ctrl+K)"><svg class="ic ic-sm"><use href="#i-zap"/></svg></button>
             <button class="ibtn" id="btnFindTop" style="width:30px;height:30px" title="Find in file"><svg class="ic ic-sm"><use href="#i-search"/></svg></button>
-            <button class="ibtn" id="btnReadTop" style="width:30px;height:30px" title="Read aloud"><svg class="ic ic-sm"><use href="#i-play"/></svg></button>
             <button class="ibtn" id="btnCopyTop" style="width:30px;height:30px" title="Copy markdown"><svg class="ic ic-sm"><use href="#i-copy"/></svg></button>
             <button class="ibtn" id="btnEditTop" style="width:30px;height:30px" title="Edit (E)"><svg class="ic ic-sm"><use href="#i-edit"/></svg></button>
           </div>

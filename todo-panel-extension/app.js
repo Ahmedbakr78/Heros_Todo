@@ -1323,7 +1323,6 @@ function closeMenu() { els.menu.classList.remove('show'); }
 function openMenu(x, y) {
   const items = [
     { id: 'palette', ic: 'i-zap', lbl: 'Commands (Ctrl+K)', kbd: 'K' },
-    { id: 'features', ic: 'i-grid', lbl: 'All 152 features', kbd: 'F' },
     { id: 'rescan', ic: 'i-refresh', lbl: 'Rescan folder' },
     { id: 'addws', ic: 'i-folder', lbl: 'Add workspace…' },
     { sep: true },
@@ -1350,7 +1349,6 @@ function openMenu(x, y) {
 }
 function menuAction(id) {
   if (id === 'palette') openPalette();
-  else if (id === 'features') { setPane('features'); setSidebar(true); }
   else if (id === 'quiz') openQuiz();
   else if (id === 'rescan') loadActiveWorkspace();
   else if (id === 'addws') pickFolder();
@@ -1372,7 +1370,6 @@ function showShortcuts() {
   showModal('Keyboard shortcuts',
     '<div class="kbd-grid">' +
     '<span class="k-label">Commands palette</span><span class="kbd-row"><kbd>Ctrl</kbd><kbd>K</kbd></span>' +
-    '<span class="k-label">Features list (152)</span><span class="kbd-row"><kbd>F</kbd></span>' +
     '<span class="k-label">Search all files</span><span class="kbd-row"><kbd>Ctrl</kbd><kbd>F</kbd></span>' +
     '<span class="k-label">Edit / save note</span><span class="kbd-row"><kbd>E</kbd> / <kbd>Ctrl</kbd><kbd>S</kbd></span>' +
     '<span class="k-label">Toggle sidebar</span><span class="kbd-row"><kbd>Ctrl</kbd><kbd>B</kbd></span>' +
@@ -1918,7 +1915,6 @@ function wire() {
       else setSidebar(false);
     }
     else if (e.key === '?' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) showShortcuts();
-    else if ((e.key === 'f' || e.key === 'F') && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { setPane('features'); setSidebar(true); }
     else if ((e.key === 'o' || e.key === 'O') && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { S.todoScope = S.todoScope === 'file' ? 'all' : 'file'; renderTodo(); }
     else if ((e.key === 'd' || e.key === 'D') && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) {
       if (S.activePath) {
@@ -2967,7 +2963,7 @@ async function mergePdfs() {
 const COMMANDS = [
   ['Open folder…', () => pickFolder()], ['Rescan', () => loadActiveWorkspace()],
   ['Search (Ctrl+F)', () => { setPane('search'); setSidebar(true); }],
-  ['Commands (Ctrl+K)', () => openPalette()], ['Features (F)', () => { setPane('features'); setSidebar(true); }],
+  ['Commands (Ctrl+K)', () => openPalette()],
   ['Edit (E)', () => { S.editing = !S.editing; renderMd(); }],
   ['Save (Ctrl+S)', () => { if (!els.mdEditWrap.hidden) els.btnSaveMd.click(); }],
   ['New note', () => createNote()], ['New folder', () => createFolder()],
@@ -3860,7 +3856,7 @@ COMMANDS.push(
   if (els.pomBreak) { els.pomBreak.value = S.pom.breakMin; els.pomBreakLbl.textContent = S.pom.breakMin + 'm'; }
   updateStats();
   renderWsSelect(); renderWsList(); renderFileList(); renderTodo();
-  renderFeatures(''); renderCounters(); renderHabits(); renderCards(); renderSwLaps(); paintSw(S.sw.elapsed || 0); paintPom();
+  renderCounters(); renderHabits(); renderCards(); renderSwLaps(); paintSw(S.sw.elapsed || 0); paintPom();
   if (els.fileSort) els.fileSort.value = S.fileSort || 'name-asc';
   applyEditorPrefs();
   ensureVoices();

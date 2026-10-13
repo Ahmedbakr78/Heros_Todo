@@ -4,6 +4,10 @@ All notable changes, newest first. Format follows Keep a Changelog. Versions are
 
 ## [2.2.0] — 2026-10-13 — Read-aloud fix + honest gaps
 
+### Removed
+
+- Read-aloud toolbar button and the in-app Features directory window (plus its palette entry, `F` key, menu item and help row). Read-aloud itself still works via selection mini-bar, `S` key and palette; the full list lives in `FEATURES.md`.
+
 ### Fixed
 
 - **Read aloud `synthesis-failed`:** the engine now sanitizes control/zero-width chars, retries once (first-utterance flake), then **auto-cycles to the next system voice** until one speaks — persisting the working voice. Exhausted voices end silently (console only, no error toast).

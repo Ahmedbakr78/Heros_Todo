@@ -1,9 +1,9 @@
 # Heros Todo — Complete Feature List (v2.1.0)
 
 > Panel-only. 100% local. Free and unlimited forever. Design system from Heros PDF. Markdown engine ideas from Heros Markdown. Both reference apps were **never modified**.
-> Press `F` in the app for the searchable, categorized in-app list. `Ctrl+K` opens the command palette.
+> Full grouped list below. `Ctrl+K` in the app opens the command palette.
 
-Total: **236 documented features** (in-app directory holds **245 cards** — some rows map to multiple cards), all unlocked, no account, no paywall.
+Total: **236 documented features**, all unlocked, no account, no paywall.
 
 ## A. Folders, files & workspaces (18)
 
@@ -281,7 +281,7 @@ Total: **236 documented features** (in-app directory holds **245 cards** — som
 | 203 | Quota-safe storage | Typed arrays, caps, in-memory fallback |
 | 204 | Re-pick recovery | ↻ button reconnects stale folder handles |
 | 205 | Global status errors | Uncaught errors surface in the status bar |
-| 206 | Category filters | 8 chips over the 229-card directory |
+| 206 | Palette command search | Type-to-filter over 40+ commands |
 | 207 | Command palette 40+ | Every wave-3 action included |
 | 208 | Keyboard map 20+ | Find, read, wrap, template, vim keys |
 | 209 | V2.0.0→v2.1.0 | Same panel-only manifest, storage+sidePanel only |
@@ -312,7 +312,6 @@ Total: **236 documented features** (in-app directory holds **245 cards** — som
 | Keys | Action |
 |---|---|
 | `Ctrl+K` | Command palette (40+ commands) |
-| `F` | Features list (229 cards, 8 categories) |
 | `Ctrl+F` | Workspace search |
 | `Ctrl+Shift+F` | Find in file |
 | `Ctrl+B` | Sidebar drawer |
