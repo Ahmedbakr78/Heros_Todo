@@ -3,7 +3,7 @@
 > Panel-only. 100% local. Free and unlimited forever. Design system from Heros PDF. Markdown engine ideas from Heros Markdown. Both reference apps were **never modified**.
 > Press `F` in the app for the searchable, categorized in-app list. `Ctrl+K` opens the command palette.
 
-Total: **220 documented features** (in-app directory holds **229 cards** — some rows map to multiple cards), all unlocked, no account, no paywall.
+Total: **236 documented features** (in-app directory holds **245 cards** — some rows map to multiple cards), all unlocked, no account, no paywall.
 
 ## A. Folders, files & workspaces (18)
 
@@ -286,6 +286,27 @@ Total: **220 documented features** (in-app directory holds **229 cards** — som
 | 208 | Keyboard map 20+ | Find, read, wrap, template, vim keys |
 | 209 | V2.0.0→v2.1.0 | Same panel-only manifest, storage+sidePanel only |
 
+## M. Wave 4 — v2.2.0 read-aloud fix + honest gaps (16 more, #210–#225)
+
+| # | Feature | Notes |
+|---|---|---|
+| 210 | Voice select | System voice picker in the read bar, persisted |
+| 211 | Speak selection | Mini-bar button + palette read any selection |
+| 212 | Chunked long speech | ~320-char sentences, sequential, no stalls |
+| 213 | No-voice guidance | Clear OS-voice install hint instead of silence |
+| 214 | PDF read-aloud | Reads the indexed PDF text when a PDF is open |
+| 215 | TTS speed live | 0.5×–2× applies to upcoming chunks, no restart |
+| 216 | Heading link copy | Click any heading → Markdown link on clipboard |
+| 217 | Copy file path | One-tap path of the open file |
+| 218 | Remove duplicate lines | Editor transform, selection or whole file |
+| 219 | Trim whitespace | Trailing-space cleaner, selection or whole file |
+| 220 | Quote lines | Toggle `>` prefix per line |
+| 221 | Case cycle | UPPER → lower → Title per selection |
+| 222 | Task toggle Ctrl+Enter | Already shipped; now also in palette |
+| 223 | Print selection | Clean pop-up print of selection or note |
+| 224 | Present mode | Black slide view, `P`, Esc exits |
+| 225 | Fullscreen | `F11` native fullscreen toggle |
+
 ## Keyboard map
 
 | Keys | Action |
@@ -300,6 +321,7 @@ Total: **220 documented features** (in-app directory holds **229 cards** — som
 | `O` | Todo scope toggle |
 | `H` `U` `S` `C` | Mark selection (mini-bar) |
 | `S` (reading) | Read aloud |
+| `P` / `F11` | Present mode / fullscreen |
 | `D` | Save reading position |
 | `N` / `T` | Page mode / theme (dark·light·system) |
 | `+` `-` | Font size |

@@ -44,6 +44,8 @@ const els = {};
  'readBar','ttsRate','btnTtsStop','readProgWrap','readProgFill',
  'dirtyDot','editCounts','btnWrap','btnTableGen','btnTocIns','featCats'
 ].forEach(id => els[id] = $(id));
+['ttsVoice','ttsProg','selRead','btnPath'
+].forEach(id => els[id] = $(id));
 
 /* ---- v2 file-type helpers (md · pdf · tex · txt — unlimited, free) ---- */
 function extOf(name) { const m = /\.([a-z0-9]+)$/i.exec(name || ''); return (m ? m[1] : '').toLowerCase(); }
@@ -94,7 +96,7 @@ const S = {
   fileSort: 'name-asc', groupFolders: true, wsFilter: '', wsPins: [], wsColors: {},
   todoDue: 'any', searchRegex: false,
   editorWrap: true, drafts: {},
-  featCat: 'all',
+  featCat: 'all', ttsVoice: '',
 };
 
 /* ---------------- error naming (DOMExceptions often have empty .message) ---------------- */
@@ -209,6 +211,7 @@ async function persist() {
     wsPins: S.wsPins || [], wsColors: S.wsColors || {}, todoDue: S.todoDue || 'any',
     editorWrap: S.editorWrap !== false,
     drafts: Object.fromEntries(Object.entries(S.drafts || {}).slice(0, 20).filter(([, v]) => (v || '').length < 200000)),
+    ttsVoice: S.ttsVoice || '',
   };
   try {
     if (chrome.storage && chrome.storage.local) await chrome.storage.local.set({ [LS_KEY]: data });
@@ -246,7 +249,7 @@ async function restore() {
     dayWords: d.dayWords || {}, studyDays: d.studyDays || {}, spellIgnore: Array.isArray(d.spellIgnore) ? d.spellIgnore : [],
     fileSort: d.fileSort || 'name-asc', groupFolders: d.groupFolders !== false,
     wsPins: Array.isArray(d.wsPins) ? d.wsPins : [], wsColors: d.wsColors || {},
-    todoDue: d.todoDue || 'any', editorWrap: d.editorWrap !== false, drafts: d.drafts || {},
+    todoDue: d.todoDue || 'any', editorWrap: d.editorWrap !== false, drafts: d.drafts || {}, ttsVoice: d.ttsVoice || '',
   });
   if (d.sw) { S.sw.elapsed = d.sw.elapsed || 0; S.sw.laps = Array.isArray(d.sw.laps) ? d.sw.laps : []; }
   if (d.pom) { S.pom.workMin = d.pom.workMin || 25; S.pom.breakMin = d.pom.breakMin || 5; }
@@ -1110,6 +1113,17 @@ function wireRenderedMd(f) {
   els.mdBody.querySelectorAll('th[data-sort]').forEach(th => {
     th.addEventListener('click', () => sortTableBy(th));
   });
+  els.mdBody.querySelectorAll('h1,h2,h3,h4').forEach(h => {
+    h.style.cursor = 'pointer';
+    h.title = 'Click to copy link';
+    h.addEventListener('click', () => {
+      try {
+        if (window.getSelection().toString().trim()) return; // don't hijack text selection
+      } catch (e) {}
+      const link = '[' + h.innerText.trim() + '](#' + (h.id || '') + ')';
+      navigator.clipboard.writeText(link).then(() => toast('Heading link copied', 'ok'), () => toast('Copy failed', 'err'));
+    });
+  });
   if (els.viewer) wireOutlineSpy();
 }
 function openWiki(name) {
@@ -1773,9 +1787,20 @@ function wire() {
   if (els.findNext) els.findNext.addEventListener('click', () => stepFind(1));
   if (els.findPrev) els.findPrev.addEventListener('click', () => stepFind(-1));
   if (els.findClose) els.findClose.addEventListener('click', () => clearFind());
-  if (els.btnReadTop) els.btnReadTop.addEventListener('click', ttsSpeak);
+  if (els.btnReadTop) els.btnReadTop.addEventListener('click', () => ttsSpeak());
   if (els.btnTtsStop) els.btnTtsStop.addEventListener('click', ttsStop);
-  if (els.ttsRate) els.ttsRate.addEventListener('input', () => { if (!els.readBar.hidden) ttsSpeak(); });
+  // rate applies live to upcoming chunks — no restart needed
+  if (els.ttsVoice) els.ttsVoice.addEventListener('change', () => {
+    S.ttsVoice = els.ttsVoice.value;
+    persist();
+  });
+  if (els.selRead) els.selRead.addEventListener('click', () => {
+    const t = ((window.getSelection() || '').toString() || '').trim();
+    if (!t) { toast('Select text first', 'err'); return; }
+    hideSelBar();
+    ttsSpeak(t);
+  });
+  if (els.btnPath) els.btnPath.addEventListener('click', copyPath);
   if (els.mdEdit) {
     els.mdEdit.addEventListener('input', () => {
       clearTimeout(draftTimer);
@@ -1826,6 +1851,11 @@ function wire() {
       if (S.activePath) { els.findBar.hidden = false; setTimeout(() => els.findInput.focus(), 30); }
     } else if ((e.key === 's' || e.key === 'S') && !/INPUT|TEXTAREA/.test(tag) && !e.ctrlKey && !e.metaKey) {
       ttsSpeak();
+    } else if ((e.key === 'p' || e.key === 'P') && !/INPUT|TEXTAREA/.test(tag) && !e.ctrlKey && !e.metaKey) {
+      togglePresent();
+    } else if (e.key === 'F11') {
+      e.preventDefault();
+      goFullscreen();
     }
   });
   // folder fallback accepts all types now
@@ -1880,7 +1910,8 @@ function wire() {
     else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') { e.preventDefault(); setPane('search'); setSidebar(true); els.searchInput.focus(); }
     else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); setSidebar(!els.sidebar.classList.contains('open')); }
     else if (e.key === 'Escape') {
-      if (els.modalBackdrop.classList.contains('show')) hideModal();
+      if (document.body.classList.contains('present')) togglePresent();
+      else if (els.modalBackdrop.classList.contains('show')) hideModal();
       else if (els.menu.classList.contains('show')) closeMenu();
       else if (!els.selBar.hidden) hideSelBar();
       else if (S.editing) setEditing(false);
@@ -2864,6 +2895,11 @@ function doInsert(kind) {
   if (kind === 'sort') {
     const ta = els.mdEdit;
     ta.value = ta.value.split('\n').sort((a, b) => a.localeCompare(b)).join('\n');
+    saveDraft();
+    return;
+  }
+  if (kind === 'dedup' || kind === 'trim' || kind === 'quote' || kind === 'casecycle') {
+    transformLines(kind);
     return;
   }
   if (kind === 'replace') {
@@ -3347,21 +3383,232 @@ function randomNote() {
   setSidebar(false);
   toast(pick.name, 'ok');
 }
-/* read aloud — built-in speech, zero deps, fully local */
-function ttsSpeak() {
-  try { speechSynthesis.cancel(); } catch (e) {}
-  if (!('speechSynthesis' in window)) { toast('Speech not supported in this browser', 'err'); return; }
-  const shown = els.mdBody && !els.mdBody.hidden ? (els.mdBody.innerText || '') : '';
-  const text = (shown || activeText() || '').replace(/\s+/g, ' ').trim().slice(0, 20000);
-  if (!text) { toast('Nothing to read', 'err'); return; }
+/* editor line transforms + print selection + copy path + present mode */
+function selLines() {
+  const ta = els.mdEdit;
+  const s = ta.selectionStart || 0, e = ta.selectionEnd || 0;
+  const v = ta.value;
+  const a = v.lastIndexOf('\n', s - 1) + 1;
+  let b = v.indexOf('\n', e);
+  if (b < 0) b = v.length;
+  return { ta, v, a, b, sel: s !== e };
+}
+function transformLines(kind) {
+  if (!els.mdEdit || els.mdEditWrap.hidden) { toast('Open Edit mode (E) first', 'err'); return; }
+  const { ta, v, a, b } = selLines();
+  const scope = v.slice(a, b).split('\n');
+  if (kind === 'dedup') {
+    const seen = new Set();
+    const out = scope.filter(l => {
+      const k = l.trim();
+      if (!k) return true;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+    ta.value = v.slice(0, a) + out.join('\n') + v.slice(b);
+  } else if (kind === 'trim') {
+    ta.value = v.slice(0, a) + scope.map(l => l.replace(/[ \t]+$/, '')).join('\n') + v.slice(b);
+  } else if (kind === 'quote') {
+    const allQuoted = scope.every(l => !l.trim() || /^>\s?/.test(l));
+    ta.value = v.slice(0, a) + scope.map(l => {
+      if (!l.trim()) return l;
+      return allQuoted ? l.replace(/^>\s?/, '') : '> ' + l;
+    }).join('\n') + v.slice(b);
+  } else if (kind === 'casecycle') {
+    const t = scope.join('\n');
+    const isUpper = t === t.toUpperCase() && /[A-Za-z]/.test(t);
+    const isTitle = /^[A-Z]/.test(t.trim());
+    const nt = isUpper ? t.toLowerCase()
+      : isTitle ? t.toUpperCase()
+      : t.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+    ta.value = v.slice(0, a) + nt + v.slice(b);
+  } else return;
+  saveDraft();
+  toast('Done', 'ok');
+}
+function printSelection() {
+  const t = ((window.getSelection() || '').toString().trim()) ||
+    (els.mdBody && !els.mdBody.hidden ? (els.mdBody.innerText || '').trim() : '');
+  if (!t) { toast('Select text first', 'err'); return; }
+  const w = window.open('', '_blank', 'width=700,height=800');
+  if (!w) { toast('Popup blocked — allow popups and retry', 'err'); return; }
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Selection</title>' +
+    '<style>body{font-family:system-ui,sans-serif;max-width:640px;margin:40px auto;padding:0 16px;line-height:1.7}</style>' +
+    '</head><body><pre style="white-space:pre-wrap;font-family:inherit">' +
+    t.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</pre></body></html>');
+  w.document.close();
+  w.focus();
+  try { w.print(); } catch (e) {}
+}
+function copyPath() {
+  const f = S.activePath ? getFile(S.activePath) : null;
+  if (!f) { toast('Open a file first', 'err'); return; }
+  navigator.clipboard.writeText(f.path).then(() => toast('Path copied', 'ok'), () => toast('Copy failed', 'err'));
+}
+function togglePresent() {
+  const on = !document.body.classList.contains('present');
+  document.body.classList.toggle('present', on);
+  toast(on ? 'Present mode — Esc exits' : 'Present off', 'ok');
+}
+function goFullscreen() {
   try {
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = ((+els.ttsRate.value) || 10) / 10;
-    u.onend = () => { if (els.readBar) els.readBar.hidden = true; };
-    u.onerror = () => { if (els.readBar) els.readBar.hidden = true; };
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
+  } catch (e) { toast('Fullscreen blocked', 'err'); }
+}
+/* read aloud — chunked, voiced, resumable. Zero deps, fully local.
+   Fixes the three real-world silences: no OS voices (common on Linux),
+   Chrome dropping cancel()+speak() pairs, and stalls on long text. */
+const TTS = { queue: [], idx: 0, active: false, started: false, watch: 0 };
+function ttsVoices() {
+  try {
+    if (typeof speechSynthesis === 'undefined') return [];
+    return speechSynthesis.getVoices() || [];
+  } catch (e) { return []; }
+}
+function ttsPickVoice() {
+  const vs = ttsVoices();
+  if (!vs.length) return null;
+  if (S.ttsVoice) {
+    const hit = vs.find(v => v.voiceURI === S.ttsVoice);
+    if (hit) return hit;
+  }
+  return vs.find(v => /^en([-_]|$)/i.test(v.lang || '') && /local/i.test(v.name || '')) ||
+    vs.find(v => /^en([-_]|$)/i.test(v.lang || '')) ||
+    vs.find(v => /local/i.test(v.name || '')) ||
+    vs[0];
+}
+function ensureVoices() {
+  const fill = () => {
+    if (!els.ttsVoice) return;
+    const vs = ttsVoices();
+    els.ttsVoice.innerHTML = vs.length ? '' : '<option value="">No voices on system</option>';
+    vs.forEach(v => {
+      const o = document.createElement('option');
+      o.value = v.voiceURI;
+      o.textContent = v.name + ' (' + v.lang + ')';
+      if (v.voiceURI === S.ttsVoice) o.selected = true;
+      els.ttsVoice.appendChild(o);
+    });
+  };
+  fill();
+  try { speechSynthesis.onvoiceschanged = fill; } catch (e) {}
+}
+function chunkText(t) {
+  // protect URLs, emails and abbreviations so dots inside them never split
+  const keep = [];
+  const s = String(t || '').replace(/\s+/g, ' ')
+    .replace(/https?:\/\/\S+|\S+@\S+\.\S+|\b(?:[A-Za-z]\.){2,}/g, (m) => {
+      keep.push(m);
+      return 'HHHKEEP' + (keep.length - 1) + 'HHH';
+    });
+  const parts = s.match(/[^.!?]+[.!?]+|\S[\s\S]*$/g) || [];
+  const back = (x) => x.replace(/HHHKEEP(\d+)HHH/g, (mm, i) => keep[+i] || mm);
+  const out = [];
+  let cur = '';
+  for (const p of parts.map(x => back(x).trim()).filter(Boolean)) {
+    if ((cur + ' ' + p).trim().length > 320) {
+      if (cur) out.push(cur);
+      cur = p;
+    } else cur = (cur + ' ' + p).trim();
+  }
+  if (cur) out.push(cur);
+  return out.flatMap(hardSplit).filter(Boolean);
+}
+function hardSplit(c) {
+  // lossless: prefer word boundaries, hard-slice spaceless runs (long URLs/tokens)
+  if (c.length <= 600) return [c];
+  const out = [];
+  let s = c;
+  while (s.length > 600) {
+    let cut = s.lastIndexOf(' ', 580);
+    if (cut < 100) cut = 580;
+    out.push(s.slice(0, cut).trim() || s.slice(0, cut));
+    s = s.slice(cut).trim();
+    if (!s) break;
+  }
+  if (s) out.push(s);
+  return out.filter(Boolean);
+}
+function ttsSpeak(text) {
+  try { speechSynthesis.cancel(); } catch (e) {}
+  if (typeof speechSynthesis === 'undefined' || !('speechSynthesis' in window)) {
+    toast('Speech not supported in this browser', 'err');
+    return;
+  }
+  let src = typeof text === 'string' ? text : '';
+  if (!src) {
+    const shown = els.mdBody && !els.mdBody.hidden ? (els.mdBody.innerText || '') : '';
+    src = shown.trim() || ((S.activePath && (S.pdfText || {})[S.activePath]) || '') || activeText() || '';
+  }
+  src = String(src).replace(/\s+/g, ' ').trim().slice(0, 30000);
+  if (!src) { toast('Nothing to read', 'err'); return; }
+  try { speechSynthesis.resume(); } catch (e) {}
+  TTS.queue = chunkText(src);
+  if (!TTS.queue.length) { toast('Nothing to read', 'err'); return; }
+  TTS.idx = 0; TTS.active = true; TTS.started = false;
+  if (els.readBar) els.readBar.hidden = false;
+  paintTtsProg();
+  setStatus('Reading…');
+  setTimeout(() => { if (TTS.active) speakChunk(); }, 120);
+  clearTimeout(TTS.watch);
+  TTS.watch = setTimeout(() => {
+    if (TTS.active && !TTS.started) {
+      ttsStop();
+      toast('No voice responded — this system has no speech voices (Linux: install speech-dispatcher + espeak-ng, then reload the panel)', 'err');
+    }
+  }, 3000);
+}
+function speakChunk() {
+  if (!TTS.active || TTS.idx >= TTS.queue.length) { ttsDone(); return; }
+  let u = null;
+  try {
+    u = new SpeechSynthesisUtterance(TTS.queue[TTS.idx]);
+  } catch (e) {
+    ttsStop();
+    toast('Read failed: ' + errName(e), 'err');
+    return;
+  }
+  const v = ttsPickVoice();
+  if (v) { try { u.voice = v; u.lang = v.lang; } catch (e) {} }
+  try { u.rate = Math.min(2, Math.max(0.5, (+els.ttsRate.value || 10) / 10)); } catch (e) {}
+  u.onstart = () => { TTS.started = true; };
+  u.onend = () => {
+    if (!TTS.active) return;
+    TTS.idx++;
+    paintTtsProg();
+    speakChunk();
+  };
+  u.onerror = (ev) => {
+    if (!TTS.active) return;
+    const err = ev && ev.error;
+    if (err === 'interrupted' || err === 'canceled') return; // our own stop()
+    ttsStop();
+    toast('Read stopped (' + (err || 'speech error') + ')', 'err');
+  };
+  try {
     speechSynthesis.speak(u);
-    if (els.readBar) els.readBar.hidden = false;
-  } catch (e) { toast('Read failed: ' + errName(e), 'err'); }
+  } catch (e) {
+    ttsStop();
+    toast('Read failed: ' + errName(e), 'err');
+  }
+}
+function paintTtsProg() {
+  if (els.ttsProg) els.ttsProg.textContent = TTS.queue.length ? (Math.min(TTS.idx + 1, TTS.queue.length) + ' / ' + TTS.queue.length) : '';
+}
+function ttsDone() {
+  const was = TTS.active;
+  TTS.active = false; TTS.queue = []; TTS.idx = 0;
+  clearTimeout(TTS.watch);
+  if (els.readBar) els.readBar.hidden = true;
+  if (was) setStatus('Ready', 'ok');
+}
+function ttsStop() {
+  TTS.active = false;
+  try { speechSynthesis.cancel(); } catch (e) {}
+  clearTimeout(TTS.watch);
+  if (els.readBar) els.readBar.hidden = true;
 }
 function ttsStop() {
   try { speechSynthesis.cancel(); } catch (e) {}
@@ -3540,6 +3787,14 @@ FEATURE_CATALOG.push(
   ['Global status errors', 'app'], ['Re-pick recovery', 'app'],
   ['Per-file crash guards', 'app'], ['Quota-safe storage', 'app']
 );
+FEATURE_CATALOG.push(
+  ['Voice select', 'read'], ['Speak selection', 'read'], ['Chunked long speech', 'read'],
+  ['No-voice guidance', 'read'], ['PDF read-aloud', 'read'], ['TTS speed live', 'read'],
+  ['Heading link copy', 'read'], ['Copy file path', 'files'],
+  ['Remove duplicate lines', 'write'], ['Trim whitespace', 'write'], ['Quote lines', 'write'],
+  ['Case cycle upper/lower/title', 'write'], ['Task toggle Ctrl+Enter', 'write'],
+  ['Print selection', 'export'], ['Present mode', 'app'], ['Fullscreen', 'app']
+);
 COMMANDS.push(
   ['Find in file', () => { if (els.findBar) { els.findBar.hidden = false; els.findInput.focus(); } }],
   ['Read aloud', () => ttsSpeak()], ['Stop reading', () => ttsStop()],
@@ -3548,6 +3803,16 @@ COMMANDS.push(
   ['Insert table', () => doInsert('table')], ['Insert TOC', () => { const t = tocInsertText(); if (t) insertText(t); }],
   ['Toggle wrap', () => { S.editorWrap = S.editorWrap === false; applyEditorPrefs(); persist(); }],
   ['Reading progress', () => updateReadProg()]
+);
+COMMANDS.push(
+  ['Read selection aloud', () => { const t = ((window.getSelection() || '').toString() || '').trim(); if (t) ttsSpeak(t); else toast('Select text first', 'err'); }],
+  ['Stop reading', () => ttsStop()],
+  ['Rename file', () => renameFile()], ['Duplicate file', () => duplicateFile()],
+  ['Delete file', () => deleteFile()], ['Copy file path', () => copyPath()],
+  ['Print selection', () => printSelection()],
+  ['Present mode', () => togglePresent()], ['Fullscreen', () => goFullscreen()],
+  ['Remove duplicate lines', () => doInsert('dedup')], ['Trim whitespace', () => doInsert('trim')],
+  ['Quote lines', () => doInsert('quote')], ['Cycle case', () => doInsert('casecycle')]
 );
 
 /* ---------------- boot (silent instant, like Heros PDF) ---------------- */
@@ -3564,6 +3829,7 @@ COMMANDS.push(
   renderFeatures(''); renderCounters(); renderHabits(); renderCards(); renderSwLaps(); paintSw(S.sw.elapsed || 0); paintPom();
   if (els.fileSort) els.fileSort.value = S.fileSort || 'name-asc';
   applyEditorPrefs();
+  ensureVoices();
   if (S.activeWsId && S.workspaces.some(w => w.id === S.activeWsId)) {
     if (S.autoRescan) await loadActiveWorkspace();
     else {
@@ -3584,7 +3850,7 @@ COMMANDS.push(
   // open drawer on first run so users see workspaces
   if (!S.workspaces.length) setSidebar(false);
   requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('booting')));
-  document.title = 'Heros Todo v2.0.0';
-  if (els.profileSub) els.profileSub.textContent = 'Local profile · private · v2.0.0';
+  document.title = 'Heros Todo v2.2.0';
+  if (els.profileSub) els.profileSub.textContent = 'Local profile · private · v2.2.0';
   setStatus('Ready', 'ok');
 })();

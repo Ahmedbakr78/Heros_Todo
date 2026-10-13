@@ -747,6 +747,11 @@ body.booting *{animation:none !important;transition:none !important}
 .recent-item.starred .star-btn{opacity:1;color:var(--accent)}
 
 /* Wave 3 — folder groups, find, drafts */
+body.present .topbar,body.present .statusbar,body.present .sidebar,body.present .side-backdrop{display:none !important}
+body.present .viewer{background:#000}
+body.present .md-card{max-width:900px;margin:14px auto}
+body.present .md-bar{display:none}
+body.present #findBar,body.present #readBar{display:none}
 .grp{margin-bottom:6px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface-2)}
 .grp > summary{cursor:pointer;padding:8px 12px;font-size:12px;font-weight:800;color:var(--text-2);list-style:none;display:flex;gap:8px;align-items:center}
 .grp > summary::-webkit-details-marker{display:none}
@@ -826,6 +831,7 @@ body.booting *{animation:none !important;transition:none !important}
 <symbol id="i-text" viewBox="0 0 24 24"><polyline points="5 7 5 4 19 4 19 7"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="9" y1="20" x2="15" y2="20"/></symbol>
 <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3.5 20 12 6 20.5 6 3.5"/></symbol>
 <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
 </defs>
 </svg>
 
@@ -960,6 +966,7 @@ body.booting *{animation:none !important;transition:none !important}
           <div class="tool-row" style="margin-top:8px">
             <button class="btn ghost" id="btnRename" style="flex:1;height:30px;font-size:12px" title="Rename open file"><svg class="ic ic-sm"><use href="#i-edit"/></svg>Rename</button>
             <button class="btn ghost" id="btnDupl" style="flex:1;height:30px;font-size:12px" title="Duplicate open file"><svg class="ic ic-sm"><use href="#i-copy"/></svg>Copy</button>
+            <button class="btn ghost" id="btnPath" style="flex:1;height:30px;font-size:12px" title="Copy file path"><svg class="ic ic-sm"><use href="#i-link"/></svg>Path</button>
             <button class="btn ghost danger" id="btnDelFile" style="flex:1;height:30px;font-size:12px" title="Delete open file"><svg class="ic ic-sm"><use href="#i-trash"/></svg>Del</button>
           </div>
         </div>
@@ -1365,7 +1372,8 @@ body.booting *{animation:none !important;transition:none !important}
           </div>
           <div class="md-bar" id="readBar" hidden>
             <svg class="ic ic-sm"><use href="#i-play"/></svg>
-            <span class="pill">Reading aloud</span>
+            <span class="pill" id="ttsProg">1 / 1</span>
+            <select id="ttsVoice" class="field" style="flex:1;min-width:0;margin:0;height:32px;font-size:12px" title="Voice"></select>
             <input type="range" id="ttsRate" min="5" max="20" value="10" style="flex:1" title="Speed">
             <button class="btn ghost" id="btnTtsStop" style="height:30px;font-size:12px" title="Stop"><svg class="ic ic-sm"><use href="#i-stop"/></svg></button>
           </div>
@@ -1394,6 +1402,10 @@ body.booting *{animation:none !important;transition:none !important}
               <button data-ins="details" title="Details">Fold</button>
               <button data-ins="sort" title="Sort lines A–Z">Sort</button>
               <button data-ins="replace" title="Find & replace">A⇄B</button>
+              <button data-ins="dedup" title="Remove duplicate lines">Dedup</button>
+              <button data-ins="trim" title="Trim trailing whitespace">Trim</button>
+              <button data-ins="quote" title="Quote / unquote lines">Quote</button>
+              <button data-ins="casecycle" title="Cycle UPPER / lower / Title">Case</button>
             </div>
             <textarea class="md-edit" id="mdEdit" spellcheck="false"></textarea>
             <div class="tool-row" style="margin-top:8px;margin-bottom:8px;align-items:center">
@@ -1483,6 +1495,7 @@ body.booting *{animation:none !important;transition:none !important}
   <button class="ibtn sel-btn" id="selU" title="Underline (U)"><svg class="ic"><use href="#i-check"/></svg></button>
   <button class="ibtn sel-btn" id="selS" title="Strike (S)"><svg class="ic"><use href="#i-x"/></svg></button>
   <button class="ibtn sel-btn" id="selCopy" title="Copy (C)"><svg class="ic"><use href="#i-copy"/></svg></button>
+  <button class="ibtn sel-btn" id="selRead" title="Read selection aloud"><svg class="ic"><use href="#i-play"/></svg></button>
   <button class="ibtn sel-btn" id="selNote" title="Note from selection"><svg class="ic ic-sm"><use href="#i-plus"/></svg></button>
 </div>
 <div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modal"></div></div>

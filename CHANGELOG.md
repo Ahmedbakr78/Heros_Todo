@@ -2,6 +2,20 @@
 
 All notable changes, newest first. Format follows Keep a Changelog. Versions are SemVer: patch = fixes, minor = features, major = breaking or manifest changes.
 
+## [2.2.0] — 2026-10-13 — Read-aloud fix + honest gaps
+
+### Fixed
+
+- **Read aloud actually works now.** The old one-shot `speak()` went silent on systems without voices (common on Linux), on Chrome's cancel-then-speak drop, and on long text. The new engine: explicit voice picker (persisted), `resume()` + delayed start, ~320-char sentence chunks with x/y progress, watchdog that names the real problem (no OS voices → install speech-dispatcher + espeak-ng), PDF text and selections as sources.
+- Rendered `- [ ]` wiring hardened further (both renderers, fence-safe mapping — shipped in 2.1.0 follow-up).
+
+### Added (16 cards, 245 total)
+
+- Voice select, speak-selection button, chunk progress, no-voice guidance, PDF read-aloud, live TTS speed.
+- Click any heading → Markdown link on clipboard. One-tap file-path copy.
+- Editor transforms: dedup, trim, quote toggle, UPPER/lower/Title cycle (insert bar + palette).
+- Print selection (clean pop-up), present mode (`P`), fullscreen (`F11`).
+
 ## [2.1.0] — 2026-10-13 — Wave 3: the max-out release
 
 ### Added (57 documented rows, 229 in-app cards)
